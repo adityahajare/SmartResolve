@@ -9,40 +9,32 @@ import {
   RotateCcw,
   ShieldAlert,
   Smartphone,
-  Receipt,
   HelpCircle,
   FileText,
   Upload,
   Sparkles,
-  AlertTriangle,
   ArrowRight,
   ArrowLeft,
   CheckCircle2,
   Clock,
-  Zap,
-  Info,
-  Layers,
-  Save,
-  Send,
-  Camera
+  Camera,
+  Send
 } from 'lucide-react';
 
 export const RaiseComplaint = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  // Multi-step state: 1: Category & Channel, 2: Complaint Details & Evidence, 3: AI Audit & Pre-Submit
   const [step, setStep] = useState(1);
 
   const [formData, setFormData] = useState({
     title: '',
-    description: '',
+    description: searchParams.get('description') || '',
     category: searchParams.get('category') || 'Payment',
-    subcategory: 'Payment failed / Deducted',
+    subcategory: 'Transaction & Billing Issue',
     referenceId: '',
-    inputChannel: 'form',
-    monetaryAmount: '',
-    urgencyHint: 'medium'
+    inputChannel: searchParams.get('channel') || 'form',
+    monetaryAmount: ''
   });
 
   const [analyzing, setAnalyzing] = useState(false);
@@ -52,17 +44,16 @@ export const RaiseComplaint = () => {
   const [fileName, setFileName] = useState('');
 
   const categories = [
-    { id: 'Payment', name: 'Payments & UPI', icon: CreditCard, color: 'text-blue-500 bg-blue-50 border-blue-200', sub: ['UPI Failed / Deducted', 'Double Debit', 'Incorrect Billing', 'Gateway Timeout'] },
-    { id: 'Delivery', name: 'Orders & Logistics', icon: Truck, color: 'text-amber-500 bg-amber-50 border-amber-200', sub: ['Delayed Shipping', 'Missing Parcel', 'Damaged Item', 'Wrong Address Delivery'] },
-    { id: 'Refund', name: 'Refunds & Returns', icon: RotateCcw, color: 'text-emerald-500 bg-emerald-50 border-emerald-200', sub: ['Refund SLA Breached', 'Return Rejected', 'Partial Amount Refunded'] },
-    { id: 'Fraud', name: 'Fraud & Security', icon: ShieldAlert, color: 'text-red-500 bg-red-50 border-red-200', sub: ['Unauthorized Transaction', 'Account Takeover', 'Phishing Alert'] },
-    { id: 'Technical', name: 'Technical / App Bug', icon: Smartphone, color: 'text-indigo-500 bg-indigo-50 border-indigo-200', sub: ['App Crash', 'Login Blocked', 'OTP Not Received', 'Server Outage'] },
-    { id: 'Other', name: 'General Grievance', icon: HelpCircle, color: 'text-purple-500 bg-purple-50 border-purple-200', sub: ['Customer Support Behavior', 'Policy Dispute', 'Other'] }
+    { id: 'Payment', name: 'Payments & UPI', icon: CreditCard, color: 'text-blue-400 bg-blue-950/40 border-blue-800/60', sub: ['UPI Transaction Timeout', 'Double Debit Reversal', 'Gateway Failure', 'Incorrect Surcharge'] },
+    { id: 'Delivery', name: 'Orders & Shipping', icon: Truck, color: 'text-amber-400 bg-amber-950/40 border-amber-800/60', sub: ['Delayed Delivery Hub Scan', 'Missing Item from Box', 'Damaged Transit Parcel', 'Wrong Address Delivery'] },
+    { id: 'Refund', name: 'Refunds & Returns', icon: RotateCcw, color: 'text-emerald-400 bg-emerald-950/40 border-emerald-800/60', sub: ['T+1 Settlement SLA Delay', 'Return Rejection Review', 'Partial Amount Credit'] },
+    { id: 'Fraud', name: 'Fraud & Security', icon: ShieldAlert, color: 'text-rose-400 bg-rose-950/40 border-rose-800/60', sub: ['Unauthorized Card Charge', 'Account Takeover Attempt', 'Phishing Notification'] },
+    { id: 'Technical', name: 'Technical & Bug', icon: Smartphone, color: 'text-indigo-400 bg-indigo-950/40 border-indigo-800/60', sub: ['OTP Not Delivered', 'Application Crash on Checkout', 'Account Access Locked'] },
+    { id: 'Other', name: 'General Inquiries', icon: HelpCircle, color: 'text-purple-400 bg-purple-950/40 border-purple-800/60', sub: ['Customer Support Escalation', 'Billing Statement Dispute', 'General Inquiries'] }
   ];
 
   const currentCategoryObj = categories.find(c => c.id === formData.category) || categories[0];
 
-  // Auto-analyze preview
   useEffect(() => {
     if (formData.description.trim().length < 10) {
       setAiPreview(null);
@@ -73,7 +64,7 @@ export const RaiseComplaint = () => {
       setAnalyzing(true);
       try {
         const res = await ticketService.analyzeTicket({
-          title: formData.title || `${formData.category} issue`,
+          title: formData.title || `${formData.category} Issue`,
           description: formData.description,
           category: formData.category
         });
@@ -81,18 +72,18 @@ export const RaiseComplaint = () => {
           setAiPreview(res.data);
         }
       } catch (err) {
-        console.error('AI preview failed', err);
+        console.error('Diagnostic engine failed', err);
       } finally {
         setAnalyzing(false);
       }
-    }, 600);
+    }, 500);
 
     return () => clearTimeout(timer);
   }, [formData.description, formData.title, formData.category]);
 
   const handleMockOCR = () => {
     setOcrScanning(true);
-    setFileName('screenshot_payment_failure.png');
+    setFileName('bank_transaction_receipt.png');
     setTimeout(() => {
       setOcrScanning(false);
       setFormData(prev => ({
@@ -100,10 +91,10 @@ export const RaiseComplaint = () => {
         referenceId: 'UPI-TXN-9029104',
         monetaryAmount: '4500',
         description: prev.description 
-          ? prev.description + '\n[OCR Evidence Extracted]: TXN ID: UPI-TXN-9029104 | Amount: ₹4,500 | Bank: HDFC Bank | Status: FAILED'
-          : 'My UPI transaction of ₹4,500 failed at checkout but amount was debited from HDFC account. Reference: UPI-TXN-9029104. Please resolve and refund urgently.'
+          ? prev.description + '\n[Receipt OCR Parsed]: Ref ID: UPI-TXN-9029104 | Amount: ₹4,500 | Bank: HDFC Bank | Status: FAILED'
+          : 'My UPI transaction of ₹4,500 was deducted from HDFC Bank account but order timed out. Reference: UPI-TXN-9029104. Please resolve urgently.'
       }));
-    }, 1200);
+    }, 1000);
   };
 
   const handleSubmit = async () => {
@@ -114,7 +105,7 @@ export const RaiseComplaint = () => {
         attachments: fileName ? [{ url: 'https://placeholder.file/evidence.png', name: fileName, type: 'image' }] : []
       });
       if (res.success) {
-        navigate(`/complaints/${res.data._id}`);
+        navigate(`/complaints/${res.data.ticketId || res.data._id}`);
       }
     } catch (err) {
       alert(err.response?.data?.error || 'Failed to submit complaint');
@@ -124,37 +115,33 @@ export const RaiseComplaint = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 pb-12">
-      {/* Header */}
+    <div className="max-w-6xl mx-auto space-y-6 pb-12 font-sans text-slate-100">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <span className="text-xs uppercase font-extrabold tracking-wider text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md">
-            Face 1: Complaint Dropper
-          </span>
-          <h1 className="text-2xl font-bold text-gray-900 mt-1">Multi-Channel Complaint Ingestion</h1>
-          <p className="text-xs text-gray-500">8-channel intelligent submission portal with live AI emotion tracking & instant preemption.</p>
+          <h1 className="text-2xl font-black tracking-wide text-white">Submit New Request</h1>
+          <p className="text-xs text-slate-400 mt-1">Provide incident details and supporting proof for expedited resolution.</p>
         </div>
 
         {/* Step Indicator */}
-        <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-gray-200 text-xs font-semibold">
-          <span className={`px-2 py-0.5 rounded-md ${step === 1 ? 'bg-blue-600 text-white' : 'text-gray-400'}`}>1. Category</span>
-          <ArrowRight className="w-3.5 h-3.5 text-gray-300" />
-          <span className={`px-2 py-0.5 rounded-md ${step === 2 ? 'bg-blue-600 text-white' : 'text-gray-400'}`}>2. Evidence</span>
-          <ArrowRight className="w-3.5 h-3.5 text-gray-300" />
-          <span className={`px-2 py-0.5 rounded-md ${step === 3 ? 'bg-blue-600 text-white' : 'text-gray-400'}`}>3. AI Review</span>
+        <div className="flex items-center gap-2 bg-[#140e24] px-4 py-2 rounded-2xl border border-fuchsia-950/80 text-xs font-bold">
+          <span className={`px-2 py-0.5 rounded-lg ${step === 1 ? 'bg-gradient-to-r from-fuchsia-600 to-indigo-600 text-white' : 'text-slate-400'}`}>1. Category</span>
+          <ArrowRight className="w-3.5 h-3.5 text-slate-600" />
+          <span className={`px-2 py-0.5 rounded-lg ${step === 2 ? 'bg-gradient-to-r from-fuchsia-600 to-indigo-600 text-white' : 'text-slate-400'}`}>2. Evidence</span>
+          <ArrowRight className="w-3.5 h-3.5 text-slate-600" />
+          <span className={`px-2 py-0.5 rounded-lg ${step === 3 ? 'bg-gradient-to-r from-fuchsia-600 to-indigo-600 text-white' : 'text-slate-400'}`}>3. Review</span>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left 2 Cols: Form Steps */}
-        <div className="lg:col-span-2 space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Form Container (7 Cols) */}
+        <div className="lg:col-span-7 space-y-6">
 
-          {/* STEP 1: Categories & Input Channel */}
+          {/* STEP 1: Categories */}
           {step === 1 && (
-            <div className="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm space-y-6">
+            <div className="bg-[#140e24]/90 backdrop-blur-xl border border-fuchsia-950/70 rounded-3xl p-6 shadow-2xl space-y-5">
               <div>
-                <h3 className="text-base font-bold text-gray-900">Step 1: Choose Issue Category</h3>
-                <p className="text-xs text-gray-500">Select the relevant department so our match engine routes this to the correct specialist.</p>
+                <h3 className="text-base font-bold text-white">Select Department Category</h3>
+                <p className="text-xs text-slate-400 mt-0.5">Choose the department best matched to resolve this request.</p>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -166,31 +153,30 @@ export const RaiseComplaint = () => {
                       key={c.id}
                       type="button"
                       onClick={() => setFormData({ ...formData, category: c.id, subcategory: c.sub[0] })}
-                      className={`p-3.5 rounded-xl border text-left transition flex flex-col justify-between h-28 ${
+                      className={`p-4 rounded-2xl border text-left transition flex flex-col justify-between h-28 ${
                         isSelected 
-                          ? 'border-blue-600 bg-blue-50/40 ring-2 ring-blue-500/20' 
-                          : 'border-gray-200 hover:border-gray-300 bg-white'
+                          ? 'border-fuchsia-500 bg-[#21163d] ring-1 ring-fuchsia-500/50' 
+                          : 'border-fuchsia-950/70 hover:border-fuchsia-800/60 bg-[#19112d]'
                       }`}
                     >
-                      <div className={`p-2 rounded-lg w-fit ${c.color}`}>
+                      <div className={`p-2 rounded-xl w-fit border ${c.color}`}>
                         <Icon className="w-5 h-5" />
                       </div>
                       <div>
-                        <div className="text-xs font-bold text-gray-900">{c.name}</div>
-                        <div className="text-[10px] text-gray-400 mt-0.5">{c.sub.length} sub-issues</div>
+                        <div className="text-xs font-bold text-white">{c.name}</div>
+                        <div className="text-[10px] text-slate-400 mt-0.5">{c.sub.length} sub-types</div>
                       </div>
                     </button>
                   );
                 })}
               </div>
 
-              {/* Subcategory select */}
               <div className="space-y-1.5 pt-2">
-                <label className="text-xs font-semibold text-gray-700">Specific Sub-Issue</label>
+                <label className="text-xs font-bold text-slate-300">Specific Sub-Issue</label>
                 <select
                   value={formData.subcategory}
                   onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
-                  className="w-full text-xs p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
+                  className="w-full text-xs p-3 bg-[#19112d] border border-fuchsia-950/80 rounded-xl text-white focus:outline-none focus:border-fuchsia-500"
                 >
                   {currentCategoryObj.sub.map((sub, i) => (
                     <option key={i} value={sub}>{sub}</option>
@@ -198,32 +184,11 @@ export const RaiseComplaint = () => {
                 </select>
               </div>
 
-              {/* Input Channel Badge Selection */}
-              <div className="space-y-1.5 pt-2">
-                <label className="text-xs font-semibold text-gray-700 block">Submitting Through Channel</label>
-                <div className="flex flex-wrap gap-2">
-                  {['form', 'chatbot', 'voice', 'screenshot', 'email', 'whatsapp'].map(ch => (
-                    <button
-                      key={ch}
-                      type="button"
-                      onClick={() => setFormData({ ...formData, inputChannel: ch })}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize border transition ${
-                        formData.inputChannel === ch
-                          ? 'bg-slate-900 text-white border-slate-900'
-                          : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                      }`}
-                    >
-                      {ch}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               <div className="pt-4 flex justify-end">
                 <button
                   type="button"
                   onClick={() => setStep(2)}
-                  className="px-5 py-2.5 bg-blue-600 text-white rounded-xl text-xs font-semibold hover:bg-blue-700 transition flex items-center gap-2"
+                  className="px-5 py-2.5 bg-gradient-to-r from-fuchsia-600 to-indigo-600 hover:from-fuchsia-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-lg"
                 >
                   Continue to Evidence <ArrowRight className="w-4 h-4" />
                 </button>
@@ -231,99 +196,96 @@ export const RaiseComplaint = () => {
             </div>
           )}
 
-          {/* STEP 2: Description & Evidence Upload */}
+          {/* STEP 2: Description & OCR Evidence */}
           {step === 2 && (
-            <div className="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm space-y-6">
+            <div className="bg-[#140e24]/90 backdrop-blur-xl border border-fuchsia-950/70 rounded-3xl p-6 shadow-2xl space-y-5">
               <div className="flex justify-between items-center">
                 <div>
-                  <h3 className="text-base font-bold text-gray-900">Step 2: Grievance Details & Evidence</h3>
-                  <p className="text-xs text-gray-500">Provide description or drop receipt/screenshot for auto-OCR extraction.</p>
+                  <h3 className="text-base font-bold text-white">Request Description & Proof</h3>
+                  <p className="text-xs text-slate-400 mt-0.5">Detail what occurred and upload supporting documents or receipts.</p>
                 </div>
-                <span className="text-xs px-2.5 py-1 bg-blue-50 text-blue-700 font-semibold rounded-lg">
-                  {formData.category} → {formData.subcategory}
+                <span className="text-[11px] px-3 py-1 bg-fuchsia-950/60 border border-fuchsia-800/60 text-fuchsia-300 font-bold rounded-xl">
+                  {formData.category}
                 </span>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1">Complaint Headline</label>
+                <label className="block text-xs font-bold text-slate-300 mb-1">Subject Headline</label>
                 <input
                   type="text"
                   required
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="e.g. ₹4,500 debited via UPI but merchant shows payment failed"
-                  className="w-full text-xs px-3 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
+                  placeholder="e.g. ₹4,500 debited via UPI but merchant checkout timed out"
+                  className="w-full text-xs px-3.5 py-2.5 bg-[#19112d] border border-fuchsia-950/80 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-fuchsia-500"
                 />
               </div>
 
-              {/* One-Click Proof Submit (OCR Feature) */}
-              <div className="p-4 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 rounded-xl border border-blue-100 space-y-3">
+              {/* OCR Upload Card */}
+              <div className="p-4 bg-[#19112d] rounded-2xl border border-fuchsia-950/80 space-y-3">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Camera className="w-4 h-4 text-blue-600" />
-                    <span className="text-xs font-bold text-gray-800">One-Click Proof Upload (AI OCR)</span>
+                  <div className="flex items-center gap-2 text-xs font-bold text-white">
+                    <Camera className="w-4 h-4 text-fuchsia-400" />
+                    <span>Attach Receipt or Screenshot</span>
                   </div>
                   <button
                     type="button"
                     onClick={handleMockOCR}
                     disabled={ocrScanning}
-                    className="text-xs px-3 py-1 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition flex items-center gap-1.5"
+                    className="text-xs px-3 py-1 bg-gradient-to-r from-fuchsia-600 to-indigo-600 hover:from-fuchsia-500 text-white font-bold rounded-lg transition flex items-center gap-1.5 shadow-sm"
                   >
                     <Sparkles className="w-3.5 h-3.5" />
-                    {ocrScanning ? 'Scanning Receipt...' : 'Auto-Scan Receipt'}
+                    {ocrScanning ? 'Scanning Receipt...' : 'Scan Receipt'}
                   </button>
                 </div>
-                <p className="text-[11px] text-gray-500">
-                  Upload screenshot, bill or bank statement. Our OCR engine auto-detects Transaction ID, monetary amount, and dates.
-                </p>
                 {fileName && (
-                  <div className="text-xs bg-white px-3 py-1.5 rounded-lg border border-blue-200 text-blue-800 flex items-center justify-between">
-                    <span>Attached: <strong>{fileName}</strong> (OCR parsed)</span>
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <div className="text-xs bg-[#20143a] px-3 py-2 rounded-xl border border-fuchsia-900/50 text-fuchsia-300 flex items-center justify-between">
+                    <span>Uploaded: <strong>{fileName}</strong> (OCR Extracted)</span>
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                   </div>
                 )}
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">Transaction / Order Reference (Optional)</label>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">Transaction / Order ID</label>
                   <input
                     type="text"
                     value={formData.referenceId}
                     onChange={(e) => setFormData({ ...formData, referenceId: e.target.value })}
-                    placeholder="e.g. TXN9810294 or ORDER-441"
-                    className="w-full text-xs px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 font-mono"
+                    placeholder="e.g. UPI-TXN-9029104"
+                    className="w-full text-xs px-3 py-2.5 bg-[#19112d] border border-fuchsia-950/80 rounded-xl text-white font-mono placeholder-slate-500 focus:outline-none focus:border-fuchsia-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">Disputed Amount (₹)</label>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">Disputed Amount (₹)</label>
                   <input
                     type="number"
                     value={formData.monetaryAmount}
                     onChange={(e) => setFormData({ ...formData, monetaryAmount: e.target.value })}
                     placeholder="e.g. 4500"
-                    className="w-full text-xs px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 font-mono"
+                    className="w-full text-xs px-3 py-2.5 bg-[#19112d] border border-fuchsia-950/80 rounded-xl text-white font-mono placeholder-slate-500 focus:outline-none focus:border-fuchsia-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1">Full Detailed Explanation</label>
+                <label className="block text-xs font-bold text-slate-300 mb-1">Detailed Explanation</label>
                 <textarea
                   required
                   rows={5}
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Detail step-by-step what occurred, dates, merchant names, customer service calls made, and desired outcome..."
-                  className="w-full text-xs p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500"
+                  placeholder="Detail step-by-step what occurred, merchant names, order timestamps, and expected resolution..."
+                  className="w-full text-xs p-3.5 bg-[#19112d] border border-fuchsia-950/80 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-fuchsia-500"
                 />
               </div>
 
-              <div className="pt-4 flex justify-between">
+              <div className="pt-3 flex justify-between">
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="px-4 py-2 border border-gray-200 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-50 flex items-center gap-1.5"
+                  className="px-4 py-2 border border-fuchsia-950/80 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-[#19112d] flex items-center gap-1.5"
                 >
                   <ArrowLeft className="w-4 h-4" /> Back
                 </button>
@@ -331,97 +293,94 @@ export const RaiseComplaint = () => {
                   type="button"
                   disabled={!formData.description.trim()}
                   onClick={() => setStep(3)}
-                  className="px-5 py-2.5 bg-blue-600 text-white rounded-xl text-xs font-semibold hover:bg-blue-700 transition flex items-center gap-2 disabled:opacity-50"
+                  className="px-5 py-2.5 bg-gradient-to-r from-fuchsia-600 to-indigo-600 hover:from-fuchsia-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-lg disabled:opacity-50"
                 >
-                  Review AI Diagnostics <ArrowRight className="w-4 h-4" />
+                  Review Request <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             </div>
           )}
 
-          {/* STEP 3: AI Diagnostic & Final Submission */}
+          {/* STEP 3: Verification & Submission */}
           {step === 3 && (
-            <div className="bg-white p-6 rounded-2xl border border-gray-200/80 shadow-sm space-y-6">
+            <div className="bg-[#140e24]/90 backdrop-blur-xl border border-fuchsia-950/70 rounded-3xl p-6 shadow-2xl space-y-5">
               <div>
-                <h3 className="text-base font-bold text-gray-900">Step 3: Verification & Queue Preemption Check</h3>
-                <p className="text-xs text-gray-500">Review AI scoring and SLA allocations before final ticket dispatch.</p>
+                <h3 className="text-base font-bold text-white">Confirm Request Dispatch</h3>
+                <p className="text-xs text-slate-400 mt-0.5">Review your request parameters before submitting to our support specialists.</p>
               </div>
 
-              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3 text-xs">
-                <div className="flex justify-between py-1 border-b border-slate-200">
-                  <span className="text-gray-500">Target Category</span>
-                  <span className="font-semibold text-gray-900">{formData.category} ({formData.subcategory})</span>
+              <div className="p-4 bg-[#19112d] rounded-2xl border border-fuchsia-950/80 space-y-3 text-xs">
+                <div className="flex justify-between py-1 border-b border-fuchsia-950/60">
+                  <span className="text-slate-400">Department</span>
+                  <span className="font-bold text-white">{formData.category} ({formData.subcategory})</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-200">
-                  <span className="text-gray-500">Headline</span>
-                  <span className="font-semibold text-gray-900">{formData.title || 'Untitled Complaint'}</span>
+                <div className="flex justify-between py-1 border-b border-fuchsia-950/60">
+                  <span className="text-slate-400">Headline</span>
+                  <span className="font-bold text-white">{formData.title || 'Untitled'}</span>
                 </div>
                 {formData.referenceId && (
-                  <div className="flex justify-between py-1 border-b border-slate-200">
-                    <span className="text-gray-500">Reference ID</span>
-                    <span className="font-mono font-semibold text-indigo-600">{formData.referenceId}</span>
+                  <div className="flex justify-between py-1 border-b border-fuchsia-950/60">
+                    <span className="text-slate-400">Reference ID</span>
+                    <span className="font-mono font-bold text-fuchsia-400">{formData.referenceId}</span>
                   </div>
                 )}
                 <div>
-                  <span className="text-gray-500 block mb-1">Issue Narrative</span>
-                  <p className="text-gray-800 bg-white p-2.5 rounded-lg border border-slate-200 whitespace-pre-line">
+                  <span className="text-slate-400 block mb-1">Description</span>
+                  <p className="text-slate-200 bg-[#140e24] p-3 rounded-xl border border-fuchsia-950/60 whitespace-pre-line leading-relaxed">
                     {formData.description}
                   </p>
                 </div>
               </div>
 
-              <div className="pt-4 flex justify-between">
+              <div className="pt-3 flex justify-between">
                 <button
                   type="button"
                   onClick={() => setStep(2)}
-                  className="px-4 py-2 border border-gray-200 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-50 flex items-center gap-1.5"
+                  className="px-4 py-2 border border-fuchsia-950/80 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-[#19112d] flex items-center gap-1.5"
                 >
-                  <ArrowLeft className="w-4 h-4" /> Edit Details
+                  <ArrowLeft className="w-4 h-4" /> Edit
                 </button>
                 <button
                   type="button"
                   disabled={submitting}
                   onClick={handleSubmit}
-                  className="px-6 py-2.5 bg-blue-600 text-white rounded-xl text-xs font-semibold hover:bg-blue-700 transition flex items-center gap-2 shadow-sm disabled:opacity-50"
+                  className="px-6 py-2.5 bg-gradient-to-r from-fuchsia-600 via-purple-600 to-indigo-600 hover:from-fuchsia-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-xl disabled:opacity-50"
                 >
                   <Send className="w-4 h-4" />
-                  {submitting ? 'Injecting into OS Priority Scheduler...' : 'Confirm & Dispatch Complaint'}
+                  {submitting ? 'Submitting to Queue...' : 'Confirm & Submit Ticket'}
                 </button>
               </div>
             </div>
           )}
         </div>
 
-        {/* Right 1 Col: Live AI Diagnostic Engine HUD */}
-        <div className="space-y-4">
-          <div className="bg-slate-900 text-white p-5 rounded-2xl border border-slate-800 shadow-xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-blue-400" />
-                <span className="text-xs font-bold tracking-wide">Live AI Diagnostic HUD</span>
-              </div>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-900/60 text-blue-300 font-mono">
-                {analyzing ? 'Analyzing...' : 'Ready'}
+        {/* Real-Time Diagnostic Sidebar (5 Cols) */}
+        <div className="lg:col-span-5 bg-[#140e24]/90 backdrop-blur-xl border border-fuchsia-950/70 rounded-3xl p-6 shadow-2xl space-y-4 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between border-b border-fuchsia-950/60 pb-3 mb-4">
+              <span className="text-xs font-bold text-white tracking-wide">Real-Time Request Diagnostics</span>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-fuchsia-950/60 text-fuchsia-400 border border-fuchsia-800/50">
+                {analyzing ? 'Analyzing...' : 'Active'}
               </span>
             </div>
 
             {aiPreview ? (
-              <div className="space-y-3.5 text-xs">
+              <div className="space-y-3 text-xs">
                 <div>
-                  <span className="text-slate-400 block text-[11px] mb-1">Emotion & Sentiment Detected</span>
-                  <div className="flex items-center justify-between bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/60">
+                  <span className="text-slate-400 block text-[10px] uppercase font-bold mb-1">Emotion Analysis</span>
+                  <div className="flex items-center justify-between bg-[#19112d] p-3 rounded-xl border border-fuchsia-950/80">
                     <SentimentEmoji sentiment={aiPreview.sentiment?.label} />
-                    <span className="font-mono text-slate-300 text-[11px]">
-                      Boost: {aiPreview.sentiment?.label === 'furious' ? '+30' : aiPreview.sentiment?.label === 'angry' ? '+20' : '+10'} pts
+                    <span className="font-mono text-fuchsia-300 text-[11px] font-bold">
+                      {aiPreview.sentiment?.score !== undefined ? `${Math.round(aiPreview.sentiment.score * 100)}% Intensity` : 'Analyzed'}
                     </span>
                   </div>
                 </div>
 
                 <div>
-                  <span className="text-slate-400 block text-[11px] mb-1">Calculated Priority & Preemption Score</span>
-                  <div className="flex items-center justify-between bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/60">
+                  <span className="text-slate-400 block text-[10px] uppercase font-bold mb-1">Priority Calculation</span>
+                  <div className="flex items-center justify-between bg-[#19112d] p-3 rounded-xl border border-fuchsia-950/80">
                     <PriorityBadge priority={aiPreview.priorityLevel} score={aiPreview.priorityScore} />
-                    <span className="text-[11px] text-amber-400 font-semibold uppercase">
+                    <span className="text-amber-400 font-bold uppercase text-[11px]">
                       Urgency: {aiPreview.urgency || 'Normal'}
                     </span>
                   </div>
@@ -429,47 +388,23 @@ export const RaiseComplaint = () => {
 
                 {aiPreview.dnaFingerprint && (
                   <div>
-                    <span className="text-slate-400 block text-[11px] mb-1">Complaint DNA Fingerprint</span>
-                    <div className="bg-slate-950 p-2 rounded-lg font-mono text-[10px] text-indigo-300 truncate border border-slate-800">
+                    <span className="text-slate-400 block text-[10px] uppercase font-bold mb-1">Complaint DNA Signature</span>
+                    <div className="bg-[#0f0a1c] p-2.5 rounded-xl font-mono text-[10px] text-cyan-300 truncate border border-fuchsia-950/80">
                       {aiPreview.dnaFingerprint}
-                    </div>
-                  </div>
-                )}
-
-                {aiPreview.signals && (
-                  <div className="p-2.5 bg-slate-800/50 rounded-xl space-y-1 text-[11px] text-slate-300">
-                    <div className="flex justify-between">
-                      <span>Deadline Pressure:</span>
-                      <strong className={aiPreview.signals.hasDeadlinePressure ? 'text-rose-400' : 'text-slate-400'}>
-                        {aiPreview.signals.hasDeadlinePressure ? 'Detected (+15)' : 'None'}
-                      </strong>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Threat Language:</span>
-                      <strong className={aiPreview.signals.hasThreatLanguage ? 'text-red-400' : 'text-slate-400'}>
-                        {aiPreview.signals.hasThreatLanguage ? 'Detected (+25)' : 'None'}
-                      </strong>
                     </div>
                   </div>
                 )}
               </div>
             ) : (
-              <div className="py-6 text-center text-slate-400 space-y-2">
-                <Clock className="w-6 h-6 mx-auto text-slate-600" />
-                <p className="text-xs">Type your complaint narrative to trigger real-time AI scoring and sentiment extraction.</p>
+              <div className="py-16 text-center text-slate-500 space-y-2">
+                <Clock className="w-8 h-8 mx-auto text-slate-600" />
+                <p className="text-xs">Type your issue narrative to preview live priority scoring and sentiment extraction.</p>
               </div>
             )}
           </div>
 
-          {/* OS Queue Info Banner */}
-          <div className="bg-blue-50/70 border border-blue-200/80 p-4 rounded-2xl text-blue-900 text-xs space-y-1.5">
-            <div className="flex items-center gap-1.5 font-bold">
-              <Zap className="w-4 h-4 text-blue-600" />
-              Dynamic Queue Scheduler Notice
-            </div>
-            <p className="text-blue-800 text-[11px] leading-relaxed">
-              SmartResolve does not process complaints strictly FIFO. If an urgent financial deduction or severe negative sentiment is identified, this ticket preempts standard queries automatically.
-            </p>
+          <div className="p-3.5 bg-[#19112d] border border-fuchsia-950/80 rounded-2xl text-[11px] text-slate-400">
+            Emergency financial deductions and critical errors are automatically flagged for expedited handling.
           </div>
         </div>
       </div>

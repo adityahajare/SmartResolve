@@ -56,16 +56,16 @@ export const CustomerLayout = () => {
                   Request Portal
                 </span>
                 <span className="text-[10px] text-fuchsia-400 font-semibold tracking-wider uppercase block">
-                  Complaint Dropper
+                  Support Client
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Switch to Company Face Pill */}
+          {/* Switch to Operations Console Pill */}
           <div className="p-3 mx-3 mt-3 bg-gradient-to-r from-[#170e2c] to-[#20143d] border border-fuchsia-950/80 rounded-2xl flex items-center justify-between text-xs shadow-md">
             <div>
-              <div className="font-bold text-[11px] text-fuchsia-300">Company Face</div>
+              <div className="font-bold text-[11px] text-fuchsia-300">Operations Console</div>
               <div className="text-[10px] text-slate-400">AI Priority Scorer</div>
             </div>
             <Link

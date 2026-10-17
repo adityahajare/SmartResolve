@@ -12,7 +12,7 @@ export const FrustrationForecast = () => {
     <div className="max-w-6xl mx-auto space-y-6 pb-12 font-sans text-slate-100">
       <div>
         <h1 className="text-2xl sm:text-3xl font-extrabold tracking-wider text-slate-100 uppercase flex items-center gap-2">
-          <TrendingUp className="w-6 h-6 text-rose-500" /> Customer Frustration Forecast Engine (Feature 16)
+          <TrendingUp className="w-6 h-6 text-rose-500" /> Customer Frustration & Escalation Forecast Engine
         </h1>
         <p className="text-xs text-slate-400 mt-1">
           Predicts customer rage probability in the next 4 hours to enable proactive manager outreach before they escalate.

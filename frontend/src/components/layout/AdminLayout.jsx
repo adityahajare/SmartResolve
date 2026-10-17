@@ -89,7 +89,7 @@ export const AdminLayout = () => {
             to="/"
             className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-semibold bg-slate-850 hover:bg-slate-800 text-teal-400 border border-slate-700/60 rounded-xl transition"
           >
-            ← Switch to Customer Face
+            ← Open Support Request Portal
           </Link>
 
           <div className="flex items-center gap-3 px-2 pt-2">

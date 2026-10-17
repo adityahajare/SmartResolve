@@ -26,38 +26,39 @@ export const Feedback = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto space-y-6 pt-6">
-      <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm text-center space-y-4">
-        <h2 className="text-xl font-bold text-gray-900">Rate Resolution Quality</h2>
-        <p className="text-xs text-gray-500">How satisfied are you with the turnaround time and clarity of resolution?</p>
+    <div className="max-w-md mx-auto space-y-6 pt-6 font-sans text-slate-100">
+      <div className="bg-[#140e24]/90 backdrop-blur-xl border border-fuchsia-950/70 rounded-3xl p-8 shadow-2xl text-center space-y-4">
+        <h2 className="text-xl font-black text-white">Rate Resolution Quality</h2>
+        <p className="text-xs text-slate-400">How satisfied are you with the turnaround time and clarity of resolution?</p>
 
-        <div className="flex justify-center gap-2 py-2">
+        <div className="flex justify-center gap-2 py-3">
           {[1, 2, 3, 4, 5].map((star) => (
             <button
               key={star}
               type="button"
               onClick={() => setRating(star)}
-              className={`p-1.5 rounded-lg transition ${rating >= star ? 'text-amber-400' : 'text-gray-300'}`}
+              className={`p-2 rounded-xl transition ${rating >= star ? 'text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]' : 'text-slate-600 hover:text-slate-400'}`}
             >
-              <Star className="w-6 h-6 fill-current" />
+              <Star className="w-7 h-7 fill-current" />
             </button>
           ))}
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-3 text-left">
+        <form onSubmit={handleSubmit} className="space-y-4 text-left">
           <textarea
             rows={3}
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            placeholder="Share any final comments..."
-            className="w-full text-xs p-2.5 border border-gray-200 rounded-lg"
+            placeholder="Share any final comments regarding the agent or resolution speed..."
+            className="w-full text-xs p-3.5 bg-[#1a1130] border border-fuchsia-950/80 rounded-2xl text-white placeholder-slate-500 focus:outline-none focus:border-fuchsia-500"
           />
           <button
             type="submit"
             disabled={submitting}
-            className="w-full py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700"
+            className="w-full py-3 bg-gradient-to-r from-fuchsia-600 to-indigo-600 hover:from-fuchsia-500 text-white rounded-xl text-xs font-bold transition shadow-lg flex items-center justify-center gap-2 disabled:opacity-50"
           >
-            Submit Feedback
+            <Send className="w-3.5 h-3.5" />
+            {submitting ? 'Submitting...' : 'Submit Resolution Feedback'}
           </button>
         </form>
       </div>

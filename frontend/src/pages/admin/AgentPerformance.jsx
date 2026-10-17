@@ -13,7 +13,7 @@ export const AgentPerformance = () => {
     <div className="max-w-6xl mx-auto space-y-6 pb-12 font-sans text-slate-100">
       <div>
         <h1 className="text-2xl sm:text-3xl font-extrabold tracking-wider text-slate-100 uppercase flex items-center gap-2">
-          <Award className="w-6 h-6 text-teal-400" /> Worker Performance & Skill-Match Matrix (Feature 3)
+          <Award className="w-6 h-6 text-teal-400" /> Resolution Specialist Performance & Skill Matrix
         </h1>
         <p className="text-xs text-slate-400 mt-1">
           Categorizes fast vs slow workers per complaint category to optimize intelligent ticket routing.

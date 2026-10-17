@@ -7,7 +7,7 @@ export const CustomerAnalytics = () => {
     <div className="max-w-5xl mx-auto space-y-6 pb-12 font-sans text-slate-100">
       <div>
         <h1 className="text-2xl font-black tracking-wide text-white flex items-center gap-2">
-          <BarChart3 className="w-6 h-6 text-fuchsia-400" /> Customer Resolution Analytics (Face 1)
+          <BarChart3 className="w-6 h-6 text-fuchsia-400" /> Resolution Transparency Analytics
         </h1>
         <p className="text-xs text-slate-400 mt-1">Transparency on your filed complaints, turnaround SLAs, and AI preemption velocity.</p>
       </div>

@@ -330,8 +330,13 @@ exports.getFrustrationForecast = async (req, res, next) => {
 // ─── ANALYZE (preview before submit) ─────────────────────────────────
 exports.analyzeTicket = async (req, res, next) => {
   try {
-    const { text, metadata } = req.body;
-    const result = await aiService.analyzeTicket({ text, metadata: { ...metadata, customerId: req.user._id.toString() } });
+    const { text, description, title, metadata = {} } = req.body;
+    const complaintText = (text || description || title || '').trim();
+    const customerId = req.user?._id ? req.user._id.toString() : 'guest';
+    const result = await aiService.analyzeTicket({ 
+      text: complaintText, 
+      metadata: { ...metadata, customerId } 
+    });
     success(res, result);
   } catch (err) { next(err); }
 };

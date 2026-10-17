@@ -58,7 +58,7 @@ export const Login = () => {
             S
           </div>
           <h2 className="text-2xl font-black text-white tracking-tight">SmartResolve Authentication</h2>
-          <p className="text-xs text-slate-400 mt-1">Sign in to access Face 1 (Dropper) or Face 2 (AI Engine)</p>
+          <p className="text-xs text-slate-400 mt-1">Sign in to access your Support Portal or Operations Console</p>
         </div>
 
         {error && (

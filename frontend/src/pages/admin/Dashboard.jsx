@@ -6,13 +6,9 @@ import {
   AlertTriangle, 
   Clock, 
   Layers, 
-  Activity, 
   Zap, 
-  ShieldAlert, 
   RefreshCw,
-  ArrowUpRight,
-  TrendingUp,
-  Cpu
+  ArrowUpRight
 } from 'lucide-react';
 
 export const AdminDashboard = () => {
@@ -40,26 +36,16 @@ export const AdminDashboard = () => {
     loadData();
   }, []);
 
-  // Default mock fallback if queue is fresh/empty
-  const displayTickets = queue.length > 0 ? queue : [
-    { ticketId: 'SR-0083', title: 'Cannot connect to payment gateway', finalScore: 92, category: 'Payment' },
-    { ticketId: 'SR-0082', title: 'Application authentication error on login', finalScore: 84, category: 'Technical' },
-    { ticketId: 'SR-0091', title: 'UPI double debit refund delayed', finalScore: 78, category: 'Refund' },
-    { ticketId: 'SR-0078', title: 'Database query execution latency', finalScore: 68, category: 'Technical' },
-    { ticketId: 'SR-0076', title: 'Transit hub shipment tracking failure', finalScore: 62, category: 'Delivery' },
-    { ticketId: 'SR-0074', title: 'User role privilege escalation request', finalScore: 54, category: 'Account' },
-  ];
-
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12 font-sans">
-      {/* Title Header with Clean Modern Tech Vibe */}
+      {/* Title Header matching the reference screenshot */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-wider text-slate-100 uppercase">
             AI SERVICE REQUEST PRIORITY SCORER
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Real-time neural priority calculation, preemption scheduling, and incident cluster matrix.
+            Real-time neural priority calculation and incident cluster matrix.
           </p>
         </div>
 
@@ -78,7 +64,7 @@ export const AdminDashboard = () => {
         {/* Card 1: Open Requests */}
         <div className="bg-[#0f172a]/90 backdrop-blur-md border border-slate-800/80 rounded-2xl p-5 shadow-lg relative overflow-hidden">
           <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-            {stats?.totalTickets || 227}
+            {stats?.totalTickets ?? 227}
           </div>
           <div className="text-xs text-slate-400 font-medium mt-1">Open Requests</div>
           <div className="absolute top-4 right-4 w-2 h-2 rounded-full bg-blue-500"></div>
@@ -87,7 +73,7 @@ export const AdminDashboard = () => {
         {/* Card 2: Assigned */}
         <div className="bg-[#0f172a]/90 backdrop-blur-md border border-slate-800/80 rounded-2xl p-5 shadow-lg relative overflow-hidden">
           <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-            {stats?.activeTickets || 85}
+            {stats?.activeTickets ?? 85}
           </div>
           <div className="text-xs text-slate-400 font-medium mt-1">Assigned</div>
           <div className="absolute top-4 right-4 w-2 h-2 rounded-full bg-indigo-500"></div>
@@ -98,7 +84,7 @@ export const AdminDashboard = () => {
           <div className="flex items-center gap-2.5">
             <AlertTriangle className="w-6 h-6 text-amber-500 fill-amber-500/20" />
             <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-              {stats?.criticalCount || 2}
+              {stats?.criticalCount ?? 2}
             </div>
           </div>
           <div className="text-xs text-slate-400 font-medium mt-1">High Priority</div>
@@ -126,9 +112,15 @@ export const AdminDashboard = () => {
           </div>
 
           <div className="space-y-4">
-            {displayTickets.map((item, idx) => {
+            {(queue.length > 0 ? queue : [
+              { ticketId: 'SR-0083', title: 'Cannot connect to VPN', finalScore: 92 },
+              { ticketId: 'SR-0082', title: 'Application error on login', finalScore: 84 },
+              { ticketId: 'SR-0091', title: 'Software update request', finalScore: 78 },
+              { ticketId: 'SR-0078', title: 'System running slow', finalScore: 68 },
+              { ticketId: 'SR-0076', title: 'Network outage', finalScore: 62 },
+              { ticketId: 'SR-0074', title: 'Access permissions needed', finalScore: 54 },
+            ]).map((item, idx) => {
               const score = item.finalScore || item.priorityScore || 70;
-              // Gradient calculation based on priority intensity
               const barColor = score >= 85 
                 ? 'from-teal-400 via-amber-400 to-rose-500' 
                 : score >= 70 
@@ -137,7 +129,6 @@ export const AdminDashboard = () => {
 
               return (
                 <div key={idx} className="flex items-center justify-between gap-4 text-xs group">
-                  {/* Left info */}
                   <div className="flex items-center gap-3 min-w-0 max-w-[60%]">
                     <span className="font-mono font-bold text-slate-300 text-[11px] whitespace-nowrap">
                       {item.ticketId || `SR-00${80 + idx}`}
@@ -147,7 +138,6 @@ export const AdminDashboard = () => {
                     </span>
                   </div>
 
-                  {/* Right: Rounded horizontal progress pill */}
                   <div className="flex items-center gap-3 flex-1 justify-end max-w-[38%]">
                     <div className="w-full bg-[#1e293b] h-2.5 rounded-full overflow-hidden p-0.5">
                       <div
@@ -165,9 +155,9 @@ export const AdminDashboard = () => {
           </div>
 
           <div className="pt-3 border-t border-slate-800/60 flex justify-between items-center text-xs text-slate-400">
-            <span>Dynamic FIFO Bypass Active</span>
+            <span>Dynamic Prioritization Active</span>
             <Link to="/admin/queue" className="text-teal-400 hover:text-teal-300 font-semibold flex items-center gap-1">
-              View Complete Scheduler <ArrowUpRight className="w-3.5 h-3.5" />
+              View Complete Queue <ArrowUpRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </div>
@@ -184,28 +174,25 @@ export const AdminDashboard = () => {
             </span>
           </div>
 
-          {/* 10x10 Heatmap Grid matching the image style */}
           <div className="aspect-square w-full max-w-[340px] mx-auto grid grid-cols-10 gap-1.5 p-3 bg-[#0a0f1d] rounded-2xl border border-slate-850 shadow-inner">
             {Array.from({ length: 100 }).map((_, i) => {
               const row = Math.floor(i / 10);
               const col = i % 10;
-              
-              // Thermal slope formula replicating the diagonal glow from bottom-left to top-right
               const value = (col * 0.9) - (row * 0.9) + 4.5;
               
-              let cellColor = 'bg-[#111a2e] opacity-40'; // deep blue base
+              let cellColor = 'bg-[#111a2e] opacity-40';
               if (value > 6.5) {
-                cellColor = 'bg-rose-600 shadow-[0_0_8px_rgba(225,29,72,0.8)]'; // hot red top-right
+                cellColor = 'bg-rose-600 shadow-[0_0_8px_rgba(225,29,72,0.8)]';
               } else if (value > 5.0) {
-                cellColor = 'bg-orange-500 shadow-[0_0_6px_rgba(249,115,22,0.6)]'; // bright orange
+                cellColor = 'bg-orange-500 shadow-[0_0_6px_rgba(249,115,22,0.6)]';
               } else if (value > 3.5) {
-                cellColor = 'bg-amber-400 shadow-[0_0_5px_rgba(251,191,36,0.5)]'; // amber
+                cellColor = 'bg-amber-400 shadow-[0_0_5px_rgba(251,191,36,0.5)]';
               } else if (value > 1.8) {
-                cellColor = 'bg-teal-500 opacity-90'; // teal
+                cellColor = 'bg-teal-500 opacity-90';
               } else if (value > 0.5) {
-                cellColor = 'bg-cyan-700 opacity-70'; // cyan
+                cellColor = 'bg-cyan-700 opacity-70';
               } else if (value > -1.5) {
-                cellColor = 'bg-blue-900 opacity-60'; // mid blue
+                cellColor = 'bg-blue-900 opacity-60';
               }
 
               return (

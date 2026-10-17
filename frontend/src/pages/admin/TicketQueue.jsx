@@ -47,10 +47,10 @@ export const TicketQueue = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-wider text-slate-100 uppercase">
-            OS PRIORITY QUEUE SCHEDULER
+            ACTIVE PRIORITY DISPATCH QUEUE
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Dynamic preemption pipeline • Aging shadow boost (+5 pts/15 min) • Real-time emotion triage
+            Intelligent preemption pipeline • Anti-starvation aging boost • Real-time emotion triage
           </p>
         </div>
 

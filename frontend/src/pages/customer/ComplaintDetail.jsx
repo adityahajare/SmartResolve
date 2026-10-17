@@ -141,12 +141,12 @@ export const ComplaintDetail = () => {
         </div>
       </div>
 
-      {/* Complex Complaint Sub-Tasks Banner (Feature 9) */}
+      {/* Complex Complaint Sub-Tasks Banner */}
       {ticket.subTasks && ticket.subTasks.length > 0 && (
         <div className="p-4 bg-[#18112d] border border-fuchsia-950/80 rounded-2xl space-y-2">
           <div className="flex items-center gap-2 text-xs font-bold text-fuchsia-300">
             <GitBranch className="w-4 h-4 text-fuchsia-400" />
-            <span>Complex Multi-Department Pipeline Breakdown (Feature 9)</span>
+            <span>Multi-Department Resolution Pipeline</span>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
             {ticket.subTasks.map((st, i) => (
