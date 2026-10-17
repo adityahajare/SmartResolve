@@ -21,7 +21,8 @@ export const Login = () => {
     try {
       const res = await authService.login({ email, password });
       if (res.success) {
-        setAuth(res.data.user, res.data.token);
+        const token = res.data.token || res.data.accessToken;
+        setAuth(res.data.user, token);
         if (['admin', 'super_admin', 'agent', 'manager'].includes(res.data.user.role)) {
           navigate('/admin');
         } else {

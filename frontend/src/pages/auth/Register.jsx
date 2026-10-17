@@ -25,7 +25,8 @@ export const Register = () => {
     try {
       const res = await authService.register(formData);
       if (res.success) {
-        setAuth(res.data.user, res.data.token);
+        const token = res.data.token || res.data.accessToken;
+        setAuth(res.data.user, token);
         if (['admin', 'agent', 'manager'].includes(res.data.user.role)) {
           navigate('/admin');
         } else {
@@ -49,7 +50,7 @@ export const Register = () => {
             S
           </div>
           <h2 className="text-2xl font-black text-white tracking-tight">Create SmartResolve Account</h2>
-          <p className="text-xs text-slate-400 mt-1">Register user in MongoDB Atlas Cloud DB</p>
+          <p className="text-xs text-slate-400 mt-1">Get started with your support portal account</p>
         </div>
 
         {error && (
@@ -119,8 +120,8 @@ export const Register = () => {
               onChange={(e) => setFormData({ ...formData, role: e.target.value })}
               className="w-full px-3 py-2.5 bg-[#1b1233] border border-fuchsia-950/80 rounded-xl text-xs text-white focus:outline-none focus:border-fuchsia-500 transition"
             >
-              <option value="customer">Customer (Complaint Dropper Access)</option>
-              <option value="admin">Administrator (Intelligent Engine Access)</option>
+              <option value="customer">Customer (Support Request Portal)</option>
+              <option value="admin">Administrator (Operations Console)</option>
               <option value="agent">Support Specialist (Priority Queue Agent)</option>
             </select>
           </div>
@@ -130,7 +131,7 @@ export const Register = () => {
             disabled={loading}
             className="w-full py-3 bg-gradient-to-r from-fuchsia-600 via-purple-600 to-indigo-600 hover:from-fuchsia-500 text-white rounded-xl text-xs font-bold transition shadow-[0_0_20px_rgba(217,70,239,0.3)] flex items-center justify-center gap-2 disabled:opacity-50 mt-2"
           >
-            {loading ? 'Creating Account in Atlas...' : 'Create Account'}
+            {loading ? 'Creating Account...' : 'Create Account'}
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>
