@@ -5,8 +5,13 @@ import { useAuth } from '../../hooks/useAuth';
 export const ProtectedRoute = ({ allowedRoles = [] }) => {
   const { isAuthenticated, role } = useAuth();
 
-  // If not logged in, provide a default demo user experience for instant evaluation
-  return <Outlet />;
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (allowedRoles.length > 0 && !allowedRoles.includes(role)) {
+    return <Navigate to="/" replace />;
+  }
 
   return <Outlet />;
 };
