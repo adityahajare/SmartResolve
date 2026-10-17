@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "AI-powered intelligent complaint management platform",
   "scripts": {
+    "start": "node backend/src/index.js",
+    "build": "cd backend && npm install",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
     "dev:ml": "cd backend/ml-service && uvicorn main:app --reload --port 8000"
