@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: smartresolve-mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  backend:
+    build: ./backend
+    container_name: smartresolve-backend
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGO_URI=mongodb://mongodb:27017/smartresolve
+      - AI_SERVICE_URL=http://ml-service:8000
+      - CLIENT_URL=http://localhost:5173
+      - JWT_SECRET=super_secret_jwt_key_smartresolve_2026
+      - JWT_REFRESH_SECRET=super_secret_jwt_refresh_key_smartresolve_2026
+    depends_on:
+      - mongodb
+      - ml-service
+
+  ml-service:
+    build: ./backend/ml-service
+    container_name: smartresolve-ml
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - MONGO_URI=mongodb://mongodb:27017/smartresolve
+
+  frontend:
+    build: ./frontend
+    container_name: smartresolve-frontend
+    restart: always
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:

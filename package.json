@@ -1,0 +1,10 @@
+{
+  "name": "smartresolve",
+  "version": "1.0.0",
+  "description": "AI-powered intelligent complaint management platform",
+  "scripts": {
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:ml": "cd backend/ml-service && uvicorn main:app --reload --port 8000"
+  }
+}

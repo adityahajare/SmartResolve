@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Environment variables & secrets
+.env
+*/.env
+*.env.local
+
+# Build outputs
+dist/
+*/dist/
+build/
+*/build/
+
+# Python virtual environment & cache
+venv/
+*/venv/
+__pycache__/
+*/__pycache__/
+*.pyc
+
+# Logs & temp
+*.log
+.DS_Store
