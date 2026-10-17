@@ -35,14 +35,13 @@ async function seedData() {
     }
 
     // 3. Create Users
-    const passwordHash = await bcrypt.hash('Admin@1234', 10);
-    const customerHash = await bcrypt.hash('Customer@1234', 10);
+    await User.deleteMany({ email: { $in: ['admin@smartresolve.ai', 'customer@smartresolve.ai', 'vikram.agent@smartresolve.ai'] } });
 
     const usersToCreate = [
       {
         name: 'Aditya (Admin Ops)',
         email: 'admin@smartresolve.ai',
-        password: passwordHash,
+        password: 'Admin@1234',
         role: 'admin',
         companyId: company._id,
         accountType: 'premium'
@@ -50,7 +49,7 @@ async function seedData() {
       {
         name: 'Vikram Malhotra',
         email: 'vikram.agent@smartresolve.ai',
-        password: passwordHash,
+        password: 'Admin@1234',
         role: 'agent',
         companyId: company._id,
         departmentId: depts['Payment & Billing'],
@@ -59,7 +58,7 @@ async function seedData() {
       {
         name: 'Rahul Sharma',
         email: 'customer@smartresolve.ai',
-        password: customerHash,
+        password: 'Customer@1234',
         role: 'customer',
         accountType: 'standard'
       }
@@ -67,12 +66,9 @@ async function seedData() {
 
     const createdUsers = {};
     for (const u of usersToCreate) {
-      let existing = await User.findOne({ email: u.email });
-      if (!existing) {
-        existing = await User.create(u);
-        console.log(`Created user: ${u.email} (${u.role})`);
-      }
-      createdUsers[u.role] = existing;
+      const newUser = await User.create(u);
+      console.log(`Created user: ${u.email} (${u.role})`);
+      createdUsers[u.role] = newUser;
     }
 
     // 4. Seed Live Real-World Tickets
