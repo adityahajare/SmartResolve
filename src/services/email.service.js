@@ -1,15 +1,24 @@
 const nodemailer = require('nodemailer');
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
-});
+let transporter = null;
+if (process.env.EMAIL_USER && process.env.EMAIL_PASS && !process.env.EMAIL_USER.includes('your@gmail.com')) {
+  try {
+    transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+      connectionTimeout: 2000,
+      greetingTimeout: 2000,
+      socketTimeout: 3000
+    });
+  } catch (_) {}
+}
 
 const send = async (to, subject, html) => {
+  if (!transporter) return;
   try {
     await transporter.sendMail({ from: `SmartResolve <${process.env.EMAIL_USER}>`, to, subject, html });
   } catch (err) {
-    console.error('Email error:', err.message);
+    console.warn('Email delivery skipped:', err.message);
   }
 };
 

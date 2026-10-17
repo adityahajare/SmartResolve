@@ -12,13 +12,17 @@ const signTokens = (userId) => ({
 exports.register = async (req, res, next) => {
   try {
     const { name, email, password, role, companyId } = req.body;
+    if (!name || !email || !password) return error(res, 'Name, email and password are required', 400);
     if (await User.findOne({ email })) return error(res, 'Email already registered', 409);
     const user = await User.create({ name, email, password, role: role || 'customer', companyId });
     const { accessToken, refreshToken } = signTokens(user._id);
     user.refreshToken = refreshToken;
     await user.save({ validateBeforeSave: false });
-    await emailService.sendWelcomeEmail(user);
-    success(res, { user, accessToken, refreshToken }, 'Registered successfully', 201);
+    
+    // Non-blocking welcome email
+    try { emailService.sendWelcomeEmail(user); } catch (_) {}
+    
+    success(res, { user, token: accessToken, accessToken, refreshToken }, 'Registered successfully', 201);
   } catch (err) { next(err); }
 };
 
@@ -33,7 +37,7 @@ exports.login = async (req, res, next) => {
     user.refreshToken = refreshToken;
     user.lastLogin    = new Date();
     await user.save({ validateBeforeSave: false });
-    success(res, { user, accessToken, refreshToken }, 'Login successful');
+    success(res, { user, token: accessToken, accessToken, refreshToken }, 'Login successful');
   } catch (err) { next(err); }
 };
 
