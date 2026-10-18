@@ -2,9 +2,20 @@ import { io } from 'socket.io-client';
 
 let socket;
 
+const getSocketURL = () => {
+  if (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')) {
+    return 'https://smartresolve-backend-m88l.onrender.com';
+  }
+  const envUrl = import.meta.env.VITE_SOCKET_URL;
+  if (!envUrl || envUrl === 'https://smartresolve-backend.onrender.com') {
+    return 'https://smartresolve-backend-m88l.onrender.com';
+  }
+  return envUrl;
+};
+
 export const initSocket = (token) => {
   if (!socket) {
-    socket = io(import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000', {
+    socket = io(getSocketURL(), {
       auth: { token },
       autoConnect: true,
     });

@@ -1,7 +1,18 @@
 import axios from 'axios';
 
+const getBaseURL = () => {
+  if (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')) {
+    return 'https://smartresolve-backend-m88l.onrender.com';
+  }
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (!envUrl || envUrl === 'https://smartresolve-backend.onrender.com') {
+    return 'https://smartresolve-backend-m88l.onrender.com';
+  }
+  return envUrl;
+};
+
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000',
+  baseURL: getBaseURL(),
 });
 
 API.interceptors.request.use((config) => {
