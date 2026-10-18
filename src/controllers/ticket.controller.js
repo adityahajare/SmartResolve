@@ -28,10 +28,25 @@ exports.createTicket = async (req, res, next) => {
 
     const customer = req.user;
 
+    // Resolve or fallback to default company
+    let resolvedCompanyId = customer.companyId || companyId;
+    if (!resolvedCompanyId) {
+      const Company = require('../models/Company');
+      let defaultComp = await Company.findOne();
+      if (!defaultComp) {
+        defaultComp = await Company.create({
+          name: 'SmartResolve Platform',
+          email: 'support@smartresolve.ai'
+        });
+      }
+      resolvedCompanyId = defaultComp._id;
+    }
+
     // 1. Build ticket draft
     const ticketData = {
       customerId:  customer._id,
-      companyId:   customer.companyId || companyId,
+      companyId:   resolvedCompanyId,
+      title:       req.body.title || (description ? description.slice(0, 60) : 'Service Request'),
       description,
       category:    category || 'Other Issues',
       subcategory: subcategory || '',
