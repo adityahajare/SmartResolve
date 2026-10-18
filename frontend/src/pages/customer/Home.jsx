@@ -42,7 +42,8 @@ export const CustomerHome = () => {
     ticketService.getTickets()
       .then(res => {
         if (res.success) {
-          setRecentTickets(res.data || []);
+          const list = Array.isArray(res.data) ? res.data : (res.data?.tickets || []);
+          setRecentTickets(list);
         }
       })
       .catch(() => {})

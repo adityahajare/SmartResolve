@@ -24,7 +24,8 @@ export const MyComplaints = () => {
     ticketService.getTickets()
       .then(res => {
         if (res.success) {
-          setTickets(res.data || []);
+          const list = Array.isArray(res.data) ? res.data : (res.data?.tickets || []);
+          setTickets(list);
         }
       })
       .catch(() => {})
