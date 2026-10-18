@@ -11,5 +11,6 @@ router.get('/admin',        requireRole('admin','super_admin','manager'), ctrl.g
 router.get('/agents',       requireRole('admin','super_admin','manager'), ctrl.getAgentLeaderboard);
 router.get('/categories',   requireRole('admin','super_admin','manager'), ctrl.getCategoryAnalytics);
 router.get('/sla',          requireRole('admin','super_admin','manager'), ctrl.getSLACompliance);
+router.get('/dataset',      ctrl.getMLDataset);
 
 module.exports = router;

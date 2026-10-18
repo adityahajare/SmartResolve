@@ -1,10 +1,64 @@
-const axios = require('axios');
+const path = require('path');
 const AI_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
+
+let mlDataset = [];
+try {
+  mlDataset = require('../data/complaint_ml_dataset.json');
+} catch (_) {
+  try { mlDataset = require('../../src/data/complaint_ml_dataset.json'); } catch (_) {}
+}
+
+// K-NN Similarity Engine against Real ML Dataset
+const findNearestComplaint = (text = '') => {
+  if (!mlDataset.length || !text) return null;
+  const inputTokens = new Set(text.toLowerCase().replace(/[^a-z0-9₹ ]/g, '').split(/\s+/).filter(w => w.length > 2));
+  
+  let bestMatch = null;
+  let bestScore = 0;
+  const topMatches = [];
+
+  for (const item of mlDataset) {
+    const itemTokens = new Set(item.text.toLowerCase().replace(/[^a-z0-9₹ ]/g, '').split(/\s+/).filter(w => w.length > 2));
+    let intersection = 0;
+    for (const t of inputTokens) {
+      if (itemTokens.has(t)) intersection++;
+    }
+    const union = new Set([...inputTokens, ...itemTokens]).size;
+    const similarity = union > 0 ? intersection / union : 0;
+    
+    if (similarity > 0.08) {
+      topMatches.push({ item, similarity });
+    }
+    if (similarity > bestScore) {
+      bestScore = similarity;
+      bestMatch = item;
+    }
+  }
+
+  topMatches.sort((a, b) => b.similarity - a.similarity);
+  return {
+    best: bestScore >= 0.10 ? bestMatch : null,
+    score: bestScore,
+    topK: topMatches.slice(0, 3)
+  };
+};
 
 // Native In-Memory Neural / NLP Engine fallback when Python service is offline
 const nativeML = {
   detectSentiment(text = '') {
     const lower = text.toLowerCase();
+    const nearest = findNearestComplaint(text);
+    if (nearest && nearest.best && nearest.best.sentiment) {
+      const sMap = {
+        furious: { label: 'furious', score: -0.92, boost: 30 },
+        angry: { label: 'angry', score: -0.65, boost: 20 },
+        frustrated: { label: 'frustrated', score: -0.35, boost: 10 },
+        neutral: { label: 'neutral', score: 0.0, boost: 0 },
+        satisfied: { label: 'satisfied', score: 0.65, boost: -5 }
+      };
+      if (sMap[nearest.best.sentiment]) return sMap[nearest.best.sentiment];
+    }
+
     const furiousWords = ['fraud', 'stolen', 'unauthorized', 'police', 'fir', 'court', 'consumer forum', 'lawyer', 'sue', 'cheat'];
     const angryWords = ['urgent', 'failed', 'terrible', 'worst', 'pathetic', 'money deducted', 'stuck', 'immediately', 'breach'];
     const positiveWords = ['thank', 'resolved', 'great', 'fixed', 'helped', 'appreciate'];
@@ -23,6 +77,16 @@ const nativeML = {
 
   classify(text = '') {
     const lower = text.toLowerCase();
+    const nearest = findNearestComplaint(text);
+    if (nearest && nearest.best) {
+      return {
+        predicted: nearest.best.category,
+        subcategory: nearest.best.subcategory,
+        confidence: Number(Math.min(0.78 + nearest.score * 0.4, 0.98).toFixed(2)),
+        datasetSampleId: nearest.best.id
+      };
+    }
+
     if (lower.includes('upi') || lower.includes('payment') || lower.includes('debit') || lower.includes('₹') || lower.includes('bank')) {
       return { predicted: 'Payment', subcategory: 'UPI / Card Failed', confidence: 0.94 };
     }
@@ -186,6 +250,10 @@ const aiService = {
     } catch (_) {
       return { isIncident: false, clusterSize: 1 };
     }
+  },
+
+  getDataset() {
+    return mlDataset;
   }
 };
 

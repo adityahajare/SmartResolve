@@ -36,5 +36,9 @@ export const ticketService = {
   analyzeTicket: async (data) => {
     const res = await API.post('/api/tickets/analyze', data);
     return res.data;
+  },
+  getFrustrationForecast: async () => {
+    const res = await API.get('/api/tickets/forecast');
+    return res.data;
   }
 };

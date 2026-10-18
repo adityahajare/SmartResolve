@@ -94,3 +94,11 @@ exports.getSLACompliance = async (req, res, next) => {
     success(res, data);
   } catch (err) { next(err); }
 };
+
+exports.getMLDataset = async (req, res, next) => {
+  try {
+    const aiService = require('../services/ai.service');
+    const dataset = aiService.getDataset();
+    success(res, { count: dataset.length, dataset });
+  } catch (err) { next(err); }
+};

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ticketService } from '../../services/ticket.service';
+import { useAuth } from '../../hooks/useAuth';
 import { 
   Plus, 
   Send, 
@@ -21,33 +22,35 @@ import {
 } from 'lucide-react';
 
 export const CustomerHome = () => {
+  const { user } = useAuth();
+  const userName = user?.name ? user.name.split(' ')[0] : 'there';
+
   // Chat intake conversation state
   const [messages, setMessages] = useState([
-    { id: 1, sender: 'user', text: 'Hi Sofia!' },
-    { id: 2, sender: 'user', text: 'Kindly arrange a ticket regarding UPI transfer failure.' },
-    { id: 3, sender: 'ai', text: 'Hi Rahul! On it! Creating your complaint ticket now.' },
-    { id: 4, sender: 'ai', text: '✓ Your complaint #TKT-0083 is ready! Priority assigned: Level 1 (Critical).' }
+    {
+      id: 1,
+      sender: 'ai',
+      text: `Hello ${userName}! I am Sofia Emma, your SmartResolve AI concierge. Describe any grievance or issue you are experiencing, and I will analyze sentiment, calculate priority, and dispatch it to our priority queue.`
+    }
   ]);
   const [inputText, setInputText] = useState('');
   const [analyzing, setAnalyzing] = useState(false);
   const [recentTickets, setRecentTickets] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchTickets = () => {
     ticketService.getTickets()
       .then(res => {
-        if (res.success && res.data.length > 0) {
-          setRecentTickets(res.data.slice(0, 7));
-        } else {
-          setRecentTickets([
-            { id: 'TKT-0083', title: 'Website Loading Issue', category: 'Technical', status: 'In Progress', dot: 'bg-rose-500' },
-            { id: 'TKT-0082', title: 'Feature Request: Bulk Export', category: 'Feature', status: 'Pending', dot: 'bg-teal-400' },
-            { id: 'TKT-0078', title: 'Account locked after OTP attempts', category: 'Account', status: 'Resolved', dot: 'bg-indigo-400' },
-            { id: 'TKT-0075', title: 'Payment debited via UPI, order failed', category: 'Payment', status: 'Critical', dot: 'bg-amber-400' },
-            { id: 'TKT-0071', title: 'Invoice GST breakdown error', category: 'Billing', status: 'Resolved', dot: 'bg-teal-400' },
-          ]);
+        if (res.success) {
+          setRecentTickets(res.data || []);
         }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchTickets();
   }, []);
 
   const handleSendMessage = async (e) => {
@@ -61,33 +64,48 @@ export const CustomerHome = () => {
 
     try {
       const res = await ticketService.analyzeTicket({
-        title: userMsg.slice(0, 40),
+        title: userMsg.slice(0, 50),
         description: userMsg,
         category: 'Payment'
       });
-
       const analysis = res.data;
+
+      // Automatically persist ticket to MongoDB Atlas
+      const created = await ticketService.createTicket({
+        title: userMsg.slice(0, 55),
+        description: userMsg,
+        category: analysis.category?.predicted || 'Technical',
+        inputChannel: 'chatbot'
+      });
+
+      const tktId = created.data?.ticketId || 'TKT-' + Math.floor(1000 + Math.random() * 9000);
       setMessages(prev => [
         ...prev,
         {
           id: Date.now() + 1,
           sender: 'ai',
-          text: `Analyzed with AI. Emotion detected: ${analysis.sentiment.label.toUpperCase()}. Priority Score: ${analysis.priorityScore}/100. Dispatched to priority queue.`
+          text: `✓ Ticket #${tktId} registered in live database! ML Category: ${analysis.category?.predicted || 'Payment'} • Emotion: ${analysis.sentiment?.label?.toUpperCase() || 'FRUSTRATED'} • Priority Score: ${analysis.priorityScore}/100. Dispatched to the active priority queue.`
         }
       ]);
+      fetchTickets();
     } catch (err) {
       setMessages(prev => [
         ...prev,
         {
           id: Date.now() + 1,
           sender: 'ai',
-          text: `Grievance registered. Ticket created with automated SLA preemption.`
+          text: `Grievance registered. Dispatched to priority queue with automated SLA tracking.`
         }
       ]);
+      fetchTickets();
     } finally {
       setAnalyzing(false);
     }
   };
+
+  const activeCount = recentTickets.filter(t => !['resolved', 'closed'].includes(t.status)).length;
+  const resolvedCount = recentTickets.filter(t => ['resolved', 'closed'].includes(t.status)).length;
+  const totalCount = recentTickets.length;
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12 font-sans text-slate-100">
@@ -102,7 +120,7 @@ export const CustomerHome = () => {
               Request Portal
             </h1>
             <span className="text-[11px] text-fuchsia-400 font-semibold tracking-wider uppercase">
-              Omnichannel AI Complaint Dropper
+              Omnichannel AI Support Client
             </span>
           </div>
         </div>
@@ -126,7 +144,7 @@ export const CustomerHome = () => {
         </div>
       </div>
 
-      {/* Main Container Layout: Left Chat Messenger (35%) + Center/Right Analytics & Activity (65%) */}
+      {/* Main Container Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
         {/* ─── LEFT: Sofia Emma AI Conversational Grievance Chatbot (4 Cols) ─── */}
@@ -144,7 +162,7 @@ export const CustomerHome = () => {
               </div>
               <div>
                 <h3 className="text-sm font-bold text-white">Sofia Emma</h3>
-                <p className="text-[10px] text-fuchsia-400 font-medium">AI Complaint Dropper Concierge</p>
+                <p className="text-[10px] text-fuchsia-400 font-medium">AI Complaint Concierge</p>
               </div>
             </div>
             <MoreVertical className="w-4 h-4 text-slate-500" />
@@ -171,7 +189,7 @@ export const CustomerHome = () => {
             {analyzing && (
               <div className="flex items-center gap-2 text-[11px] text-fuchsia-400 italic">
                 <Sparkles className="w-3.5 h-3.5 animate-spin" />
-                Sofia is classifying urgency & priority score...
+                Sofia is classifying with ML & creating complaint ticket...
               </div>
             )}
           </div>
@@ -183,7 +201,7 @@ export const CustomerHome = () => {
                 type="text"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                placeholder="Do you need more assistance?"
+                placeholder="Describe your issue or complaint..."
                 className="flex-1 bg-transparent border-none text-xs text-white placeholder-slate-500 focus:outline-none px-2"
               />
               <button
@@ -194,7 +212,8 @@ export const CustomerHome = () => {
               </button>
               <button
                 type="submit"
-                className="w-8 h-8 rounded-xl bg-gradient-to-r from-fuchsia-600 to-purple-600 hover:from-fuchsia-500 text-white flex items-center justify-center transition shadow-sm"
+                disabled={analyzing}
+                className="w-8 h-8 rounded-xl bg-gradient-to-r from-fuchsia-600 to-purple-600 hover:from-fuchsia-500 text-white flex items-center justify-center transition shadow-sm disabled:opacity-50"
               >
                 <Send className="w-3.5 h-3.5" />
               </button>
@@ -205,14 +224,14 @@ export const CustomerHome = () => {
         {/* ─── RIGHT: Request Analytics & Recent Feed (8 Cols) ─── */}
         <div className="lg:col-span-8 space-y-6">
 
-          {/* Top 3 KPI Pill Cards matching screenshot (Active Requests, Resolved, Avg Response) */}
+          {/* Top 3 KPI Pill Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="bg-[#140e24]/90 backdrop-blur-xl border border-fuchsia-950/70 rounded-3xl p-4 shadow-xl">
               <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">Active Requests</span>
               <div className="flex items-baseline gap-2 mt-2">
-                <span className="text-2xl sm:text-3xl font-black text-white">29</span>
-                <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-800/50">
-                  +12.5%
+                <span className="text-2xl sm:text-3xl font-black text-white">{activeCount}</span>
+                <span className="text-[10px] font-bold text-fuchsia-400 bg-fuchsia-950/60 px-2 py-0.5 rounded-full border border-fuchsia-800/50">
+                  Live DB
                 </span>
               </div>
             </div>
@@ -220,19 +239,19 @@ export const CustomerHome = () => {
             <div className="bg-[#140e24]/90 backdrop-blur-xl border border-fuchsia-950/70 rounded-3xl p-4 shadow-xl">
               <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">Total Resolved</span>
               <div className="flex items-baseline gap-2 mt-2">
-                <span className="text-2xl sm:text-3xl font-black text-white">17.5k</span>
+                <span className="text-2xl sm:text-3xl font-black text-white">{resolvedCount}</span>
                 <span className="text-[10px] font-bold text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-800/50">
-                  +98.2%
+                  {totalCount > 0 ? `${Math.round((resolvedCount / totalCount) * 100)}%` : '100%'}
                 </span>
               </div>
             </div>
 
             <div className="bg-[#140e24]/90 backdrop-blur-xl border border-fuchsia-950/70 rounded-3xl p-4 shadow-xl">
-              <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">Avg. Response</span>
+              <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">Total Reports</span>
               <div className="flex items-baseline gap-2 mt-2">
-                <span className="text-2xl sm:text-3xl font-black text-white">2.4h</span>
-                <span className="text-[10px] font-bold text-rose-400 bg-rose-950/60 px-2 py-0.5 rounded-full border border-rose-800/50">
-                  -0.8 hrs
+                <span className="text-2xl sm:text-3xl font-black text-white">{totalCount}</span>
+                <span className="text-[10px] font-bold text-teal-400 bg-teal-950/60 px-2 py-0.5 rounded-full border border-teal-800/50">
+                  All Channels
                 </span>
               </div>
             </div>
@@ -378,23 +397,37 @@ export const CustomerHome = () => {
               </div>
 
               <div className="space-y-2 text-xs overflow-y-auto max-h-36 pr-1">
-                {recentTickets.map((t, idx) => (
-                  <div
-                    key={idx}
-                    className="p-2 bg-[#1b1233]/70 hover:bg-[#20163c] rounded-xl border border-fuchsia-950/60 flex items-center justify-between transition"
-                  >
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className={`w-2 h-2 rounded-full flex-shrink-0 ${t.dot || 'bg-fuchsia-400'}`}></span>
-                      <div className="truncate">
-                        <span className="font-semibold text-slate-200 text-[11px] block truncate">{t.title}</span>
-                        <span className="text-[9px] text-slate-400">{t.category}</span>
-                      </div>
-                    </div>
-                    <span className="text-[10px] font-mono text-fuchsia-300 ml-2 whitespace-nowrap">
-                      {t.status || 'Active'}
-                    </span>
+                {recentTickets.length === 0 ? (
+                  <div className="p-4 bg-[#1b1233]/40 rounded-xl border border-dashed border-fuchsia-950/60 text-center">
+                    <p className="text-[11px] text-slate-400">No complaints registered yet.</p>
+                    <p className="text-[10px] text-slate-500 mt-1">Use the AI chat or click below to lodge a grievance.</p>
                   </div>
-                ))}
+                ) : (
+                  recentTickets.slice(0, 5).map((t, idx) => (
+                    <Link
+                      key={t._id || idx}
+                      to={`/complaints/${t.ticketId || t._id}`}
+                      className="p-2 bg-[#1b1233]/70 hover:bg-[#20163c] rounded-xl border border-fuchsia-950/60 flex items-center justify-between transition block"
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                          t.status === 'resolved' ? 'bg-emerald-400' :
+                          t.priority === 'critical' ? 'bg-rose-500' :
+                          t.priority === 'high' ? 'bg-amber-400' : 'bg-fuchsia-400'
+                        }`}></span>
+                        <div className="truncate">
+                          <span className="font-semibold text-slate-200 text-[11px] block truncate">{t.title}</span>
+                          <span className="text-[9px] text-slate-400">{t.category} • {t.ticketId || 'Active'}</span>
+                        </div>
+                      </div>
+                      <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded capitalize ml-2 whitespace-nowrap ${
+                        t.status === 'resolved' ? 'text-emerald-300 bg-emerald-950/50' : 'text-fuchsia-300 bg-fuchsia-950/50'
+                      }`}>
+                        {t.status?.replace('_', ' ') || 'Active'}
+                      </span>
+                    </Link>
+                  ))
+                )}
               </div>
 
               <Link

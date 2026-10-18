@@ -1,0 +1,523 @@
+[
+  {
+    "id": "ML-PAY-001",
+    "text": "UPI payment of ₹4,500 debited from HDFC account for Swiggy order, but transaction timed out and order was not confirmed.",
+    "category": "Payment",
+    "subcategory": "UPI Transaction Timeout",
+    "sentiment": "furious",
+    "sentimentScore": -0.88,
+    "urgency": "critical",
+    "basePriorityScore": 92,
+    "dnaFingerprint": "DNA-PAY-UPI-001",
+    "entities": {
+      "amount": 4500,
+      "bank": "HDFC",
+      "platform": "Swiggy",
+      "channel": "UPI"
+    },
+    "targetDepartment": "Payment & Billing",
+    "suggestedResolution": "Initiate instant bank reversal under RBI T+1 guideline. Settlement reference verified."
+  },
+  {
+    "id": "ML-PAY-002",
+    "text": "Scanned QR code at petrol pump, ₹2,800 deducted via Google Pay twice due to server latency. Need immediate refund of duplicate debit.",
+    "category": "Payment",
+    "subcategory": "Duplicate Debit",
+    "sentiment": "furious",
+    "sentimentScore": -0.85,
+    "urgency": "critical",
+    "basePriorityScore": 89,
+    "dnaFingerprint": "DNA-PAY-UPI-002",
+    "entities": {
+      "amount": 2800,
+      "bank": "SBI",
+      "platform": "Google Pay",
+      "channel": "QR Scan"
+    },
+    "targetDepartment": "Payment & Billing",
+    "suggestedResolution": "Duplicate debit flagged on merchant ledger. Auto-reversal issued within 24h."
+  },
+  {
+    "id": "ML-PAY-003",
+    "text": "Credit card charged ₹12,999 on Amazon but order status shows cancelled. Customer care says wait 7 days, which is unacceptable.",
+    "category": "Payment",
+    "subcategory": "Cancelled Order Charge",
+    "sentiment": "angry",
+    "sentimentScore": -0.72,
+    "urgency": "high",
+    "basePriorityScore": 82,
+    "dnaFingerprint": "DNA-PAY-CRD-003",
+    "entities": {
+      "amount": 12999,
+      "bank": "ICICI",
+      "platform": "Amazon",
+      "channel": "Credit Card"
+    },
+    "targetDepartment": "Payment & Billing",
+    "suggestedResolution": "Acquirer hold released. ARN number sent to customer for bank tracking."
+  },
+  {
+    "id": "ML-PAY-004",
+    "text": "Autopay mandate deducted ₹999 subscription fee even though I cancelled it 5 days ago.",
+    "category": "Payment",
+    "subcategory": "Unauthorized Autopay",
+    "sentiment": "frustrated",
+    "sentimentScore": -0.58,
+    "urgency": "high",
+    "basePriorityScore": 74,
+    "dnaFingerprint": "DNA-PAY-REC-004",
+    "entities": {
+      "amount": 999,
+      "channel": "e-Mandate"
+    },
+    "targetDepartment": "Payment & Billing",
+    "suggestedResolution": "Mandate revoked in NPCI switch. Subscription fee refunded to primary VPA."
+  },
+  {
+    "id": "ML-PAY-005",
+    "text": "Sent ₹15,000 via IMPS to vendor account. Amount debited from my ICICI account but vendor has not received it after 48 hours.",
+    "category": "Payment",
+    "subcategory": "IMPS Inter-bank Delay",
+    "sentiment": "furious",
+    "sentimentScore": -0.91,
+    "urgency": "critical",
+    "basePriorityScore": 95,
+    "dnaFingerprint": "DNA-PAY-IMP-005",
+    "entities": {
+      "amount": 15000,
+      "bank": "ICICI",
+      "channel": "IMPS"
+    },
+    "targetDepartment": "Payment & Billing",
+    "suggestedResolution": "RRN reconciliation escalated to beneficiary bank. Credit confirmation obtained."
+  },
+  {
+    "id": "ML-SEC-001",
+    "text": "Unauthorized transaction of ₹35,000 debited from my account at 2 AM without any OTP received. Block my card immediately!",
+    "category": "Fraud",
+    "subcategory": "Unauthorized Card Swipe",
+    "sentiment": "furious",
+    "sentimentScore": -0.98,
+    "urgency": "critical",
+    "basePriorityScore": 99,
+    "dnaFingerprint": "DNA-FRD-CRD-001",
+    "entities": {
+      "amount": 35000,
+      "time": "2:00 AM",
+      "channel": "International POS"
+    },
+    "targetDepartment": "Compliance",
+    "suggestedResolution": "Card instantly hotlisted. Chargeback dispute raised under zero-liability fraud policy."
+  },
+  {
+    "id": "ML-SEC-002",
+    "text": "Received phishing call claiming to be your KYC department. They asked for my debit card CVV. Please investigate this caller number.",
+    "category": "Fraud",
+    "subcategory": "Vishing / Phishing Attempt",
+    "sentiment": "angry",
+    "sentimentScore": -0.65,
+    "urgency": "high",
+    "basePriorityScore": 84,
+    "dnaFingerprint": "DNA-FRD-KYC-002",
+    "entities": {
+      "channel": "Phone Call",
+      "risk": "Social Engineering"
+    },
+    "targetDepartment": "Compliance",
+    "suggestedResolution": "Fraud prevention team notified. Caller ID submitted to telecom cyber cell."
+  },
+  {
+    "id": "ML-SEC-003",
+    "text": "Someone created a duplicate account with my PAN card details. I received a CIBIL score alert today!",
+    "category": "Fraud",
+    "subcategory": "Identity Theft",
+    "sentiment": "furious",
+    "sentimentScore": -0.94,
+    "urgency": "critical",
+    "basePriorityScore": 96,
+    "dnaFingerprint": "DNA-FRD-PAN-003",
+    "entities": {
+      "doc": "PAN Card",
+      "alert": "CIBIL Bureau"
+    },
+    "targetDepartment": "Compliance",
+    "suggestedResolution": "Ghost account frozen immediately. Rectification letter dispatched to credit bureaus."
+  },
+  {
+    "id": "ML-LOG-001",
+    "text": "Package marked delivered by courier partner BlueDart but I was at home and received nothing. Signature is forged.",
+    "category": "Delivery",
+    "subcategory": "Fake Delivery Confirmation",
+    "sentiment": "furious",
+    "sentimentScore": -0.89,
+    "urgency": "critical",
+    "basePriorityScore": 90,
+    "dnaFingerprint": "DNA-LOG-DLV-001",
+    "entities": {
+      "courier": "BlueDart",
+      "issue": "Fake Proof of Delivery"
+    },
+    "targetDepartment": "Logistics & Orders",
+    "suggestedResolution": "Delivery driver route GPS verified. Re-dispatch dispatched via priority courier."
+  },
+  {
+    "id": "ML-LOG-002",
+    "text": "Order #ORD-98124 stuck at Mumbai Hub since 5 days without any movement. Expected delivery was 12th Oct.",
+    "category": "Delivery",
+    "subcategory": "Hub In-Transit Delay",
+    "sentiment": "frustrated",
+    "sentimentScore": -0.62,
+    "urgency": "high",
+    "basePriorityScore": 78,
+    "dnaFingerprint": "DNA-LOG-HUB-002",
+    "entities": {
+      "hub": "Mumbai Hub",
+      "orderId": "ORD-98124"
+    },
+    "targetDepartment": "Logistics & Orders",
+    "suggestedResolution": "Transit expedite ping sent to hub manager. Expected out-for-delivery in 18 hours."
+  },
+  {
+    "id": "ML-LOG-003",
+    "text": "Glass dinnerware set arrived broken into pieces. The box had zero fragile stickers or bubble wrap.",
+    "category": "Delivery",
+    "subcategory": "Damaged Transit Cargo",
+    "sentiment": "angry",
+    "sentimentScore": -0.78,
+    "urgency": "high",
+    "basePriorityScore": 81,
+    "dnaFingerprint": "DNA-LOG-DMG-003",
+    "entities": {
+      "item": "Glass Dinnerware",
+      "packaging": "Insufficient"
+    },
+    "targetDepartment": "Logistics & Orders",
+    "suggestedResolution": "Damage evidence verified. Instant replacement dispatched with reinforced packaging."
+  },
+  {
+    "id": "ML-REF-001",
+    "text": "Returned the defective shoes 10 days ago, courier picked it up with receipt #RET-201, but refund not credited to bank.",
+    "category": "Refund",
+    "subcategory": "Pending Return Refund",
+    "sentiment": "angry",
+    "sentimentScore": -0.74,
+    "urgency": "high",
+    "basePriorityScore": 80,
+    "dnaFingerprint": "DNA-REF-RTN-001",
+    "entities": {
+      "returnId": "RET-201",
+      "daysWaiting": 10
+    },
+    "targetDepartment": "Payment & Billing",
+    "suggestedResolution": "Warehouse return receipt verified. Instant refund triggered via IMPS gateway."
+  },
+  {
+    "id": "ML-REF-002",
+    "text": "Cancelled train ticket 14 days ago. IRCTC said refund processed, but your app still shows pending review.",
+    "category": "Refund",
+    "subcategory": "Gateway Refund Discrepancy",
+    "sentiment": "frustrated",
+    "sentimentScore": -0.55,
+    "urgency": "medium",
+    "basePriorityScore": 68,
+    "dnaFingerprint": "DNA-REF-TRN-002",
+    "entities": {
+      "service": "IRCTC Train",
+      "daysWaiting": 14
+    },
+    "targetDepartment": "Payment & Billing",
+    "suggestedResolution": "PG ledger reconciled. Refund amount credited with apology voucher."
+  },
+  {
+    "id": "ML-TEC-001",
+    "text": "Android application crashes instantly on launching cart screen since the latest version 4.2.1 update.",
+    "category": "Technical",
+    "subcategory": "App Crash on Launch",
+    "sentiment": "frustrated",
+    "sentimentScore": -0.45,
+    "urgency": "medium",
+    "basePriorityScore": 62,
+    "dnaFingerprint": "DNA-TEC-APP-001",
+    "entities": {
+      "os": "Android",
+      "appVersion": "4.2.1",
+      "screen": "Cart"
+    },
+    "targetDepartment": "Tech Support",
+    "suggestedResolution": "Crash dump linked to ticket. Hotfix build 4.2.2 pushed to Google Play Store."
+  },
+  {
+    "id": "ML-TEC-002",
+    "text": "Two-factor OTP SMS not arriving on Airtel number. Tried 6 times, account now temporarily locked.",
+    "category": "Technical",
+    "subcategory": "SMS Gateway Drop",
+    "sentiment": "angry",
+    "sentimentScore": -0.76,
+    "urgency": "high",
+    "basePriorityScore": 83,
+    "dnaFingerprint": "DNA-TEC-OTP-002",
+    "entities": {
+      "carrier": "Airtel",
+      "attempts": 6
+    },
+    "targetDepartment": "Tech Support",
+    "suggestedResolution": "Fallback to WhatsApp / Email OTP enabled. Account unlocked manually."
+  },
+  {
+    "id": "ML-PAY-006",
+    "text": "Zomato order cancelled by restaurant, but payment of ₹850 via PhonePe not refunded back to account.",
+    "category": "Payment",
+    "subcategory": "Merchant Order Cancellation",
+    "sentiment": "frustrated",
+    "sentimentScore": -0.65,
+    "urgency": "high",
+    "basePriorityScore": 78,
+    "dnaFingerprint": "DNA-PAY-ZOM-006",
+    "entities": {
+      "amount": 850,
+      "app": "Zomato",
+      "vpa": "PhonePe"
+    },
+    "targetDepartment": "Payment & Billing",
+    "suggestedResolution": "Refund initiated back to source VPA. Transaction Reference ID: REF-ZOM-99201."
+  },
+  {
+    "id": "ML-PAY-007",
+    "text": "ATM did not dispense cash of ₹10,000 at SBI ATM counter, but my Axis Bank account was debited. Need urgent credit.",
+    "category": "Payment",
+    "subcategory": "ATM Cash Dispense Failure",
+    "sentiment": "furious",
+    "sentimentScore": -0.95,
+    "urgency": "critical",
+    "basePriorityScore": 98,
+    "dnaFingerprint": "DNA-PAY-ATM-007",
+    "entities": {
+      "amount": 10000,
+      "atm": "SBI",
+      "issuer": "Axis Bank"
+    },
+    "targetDepartment": "Payment & Billing",
+    "suggestedResolution": "EJ log reconciliation raised with switch operator. Proactive credit in 48 hours as per RBI norms."
+  },
+  {
+    "id": "ML-PAY-008",
+    "text": "International transaction of  billed on Netflix without auto-renewal consent. Request immediate charge reversal.",
+    "category": "Payment",
+    "subcategory": "Unauthorized Cross-border Debit",
+    "sentiment": "angry",
+    "sentimentScore": -0.75,
+    "urgency": "high",
+    "basePriorityScore": 84,
+    "dnaFingerprint": "DNA-PAY-INT-008",
+    "entities": {
+      "amount": 3750,
+      "currency": "USD",
+      "merchant": "Netflix"
+    },
+    "targetDepartment": "Payment & Billing",
+    "suggestedResolution": "International recurring token deleted. Disputed charge sent for chargeback review."
+  },
+  {
+    "id": "ML-PAY-009",
+    "text": "Electricity bill of ₹3,400 paid on your portal, but Mahavitaran power board marked it unpaid and sent disconnection notice.",
+    "category": "Payment",
+    "subcategory": "Utility Bill Payment Failure",
+    "sentiment": "furious",
+    "sentimentScore": -0.96,
+    "urgency": "critical",
+    "basePriorityScore": 97,
+    "dnaFingerprint": "DNA-PAY-UTL-009",
+    "entities": {
+      "amount": 3400,
+      "board": "Mahavitaran",
+      "type": "Electricity"
+    },
+    "targetDepartment": "Payment & Billing",
+    "suggestedResolution": "BBPS utility settlement proof sent to discom manager with urgent stay on disconnection."
+  },
+  {
+    "id": "ML-PAY-010",
+    "text": "Stock broker app deducted ₹25,000 for intraday margin call after market closed. Unlawful interest penalty charged.",
+    "category": "Payment",
+    "subcategory": "Brokerage Margin Discrepancy",
+    "sentiment": "furious",
+    "sentimentScore": -0.92,
+    "urgency": "critical",
+    "basePriorityScore": 94,
+    "dnaFingerprint": "DNA-PAY-STK-010",
+    "entities": {
+      "amount": 25000,
+      "market": "NSE Intraday"
+    },
+    "targetDepartment": "Compliance",
+    "suggestedResolution": "Contract note re-audited with risk RMS team. Excess penalty credited back to trading ledger."
+  },
+  {
+    "id": "ML-SEC-004",
+    "text": "Received SMS that my SIM card will be deactivated unless I click an APK link. Is this verified or fraud?",
+    "category": "Fraud",
+    "subcategory": "Malicious APK Dropper",
+    "sentiment": "anxious",
+    "sentimentScore": -0.45,
+    "urgency": "high",
+    "basePriorityScore": 80,
+    "dnaFingerprint": "DNA-FRD-APK-004",
+    "entities": {
+      "vector": "Smishing",
+      "format": "APK"
+    },
+    "targetDepartment": "Compliance",
+    "suggestedResolution": "Malicious URL reported to CERT-In. Advisory sent to user not to install unknown sources."
+  },
+  {
+    "id": "ML-SEC-005",
+    "text": "Scammer convinced my elderly father to install AnyDesk and drained ₹50,000 savings. Need urgent cyber cell assistance.",
+    "category": "Fraud",
+    "subcategory": "Remote Screen Share Fraud",
+    "sentiment": "furious",
+    "sentimentScore": -0.99,
+    "urgency": "critical",
+    "basePriorityScore": 100,
+    "dnaFingerprint": "DNA-FRD-ANY-005",
+    "entities": {
+      "amount": 50000,
+      "tool": "AnyDesk"
+    },
+    "targetDepartment": "Compliance",
+    "suggestedResolution": "Cyber Crime reporting template dispatched. Bank nodal officer alerted to freeze mule beneficiary account."
+  },
+  {
+    "id": "ML-SEC-006",
+    "text": "My credit card details leaked in dark web dump. Getting OTP prompts for Russian ruble transactions.",
+    "category": "Fraud",
+    "subcategory": "Card Data Breach",
+    "sentiment": "furious",
+    "sentimentScore": -0.93,
+    "urgency": "critical",
+    "basePriorityScore": 96,
+    "dnaFingerprint": "DNA-FRD-LEK-006",
+    "entities": {
+      "geography": "International",
+      "type": "Compromised PAN"
+    },
+    "targetDepartment": "Compliance",
+    "suggestedResolution": "Card instantly permanently blocked. Free re-issuance of chip & PIN EMV card initiated."
+  },
+  {
+    "id": "ML-LOG-004",
+    "text": "Medicine parcel containing insulin for diabetic patient delayed 4 days. Temperature-controlled packaging will be ruined.",
+    "category": "Delivery",
+    "subcategory": "Critical Medical Logistics Delay",
+    "sentiment": "furious",
+    "sentimentScore": -0.97,
+    "urgency": "critical",
+    "basePriorityScore": 99,
+    "dnaFingerprint": "DNA-LOG-MED-004",
+    "entities": {
+      "category": "Medicine",
+      "item": "Insulin"
+    },
+    "targetDepartment": "Logistics & Orders",
+    "suggestedResolution": "Emergency route priority flag attached. Hub manager instructed for special direct delivery."
+  },
+  {
+    "id": "ML-LOG-005",
+    "text": "Delivery agent refused to deliver to 4th floor without lift and behaved rudely, asking me to come down in rain.",
+    "category": "Delivery",
+    "subcategory": "Agent Misbehavior / Refusal",
+    "sentiment": "angry",
+    "sentimentScore": -0.72,
+    "urgency": "medium",
+    "basePriorityScore": 68,
+    "dnaFingerprint": "DNA-LOG-MIS-005",
+    "entities": {
+      "issue": "Delivery Conduct"
+    },
+    "targetDepartment": "Logistics & Orders",
+    "suggestedResolution": "Courier partner operations head assigned. Delivery agent reprimanded and re-trained."
+  },
+  {
+    "id": "ML-LOG-006",
+    "text": "Ordered iPhone 16 Pro, received sealed box with soap bar and stones inside. Driver fled before inspection.",
+    "category": "Delivery",
+    "subcategory": "High-Value In-Transit Pilferage",
+    "sentiment": "furious",
+    "sentimentScore": -0.99,
+    "urgency": "critical",
+    "basePriorityScore": 100,
+    "dnaFingerprint": "DNA-LOG-PIL-006",
+    "entities": {
+      "item": "iPhone 16 Pro",
+      "cost": 129000
+    },
+    "targetDepartment": "Logistics & Orders",
+    "suggestedResolution": "Hub weigh-in video audit launched. Police complaint filed against third-party transit agency."
+  },
+  {
+    "id": "ML-REF-003",
+    "text": "Flight ticket cancelled by Indigo airline due to runway repair. Booking portal refusing full refund without 20% penalty deduction.",
+    "category": "Refund",
+    "subcategory": "Airline Involuntary Cancellation",
+    "sentiment": "furious",
+    "sentimentScore": -0.88,
+    "urgency": "critical",
+    "basePriorityScore": 91,
+    "dnaFingerprint": "DNA-REF-AIR-003",
+    "entities": {
+      "airline": "Indigo",
+      "authority": "DGCA Circular"
+    },
+    "targetDepartment": "Payment & Billing",
+    "suggestedResolution": "DGCA zero-deduction compliance enforced. 100% ticket amount refunded without cancellation fees."
+  },
+  {
+    "id": "ML-REF-004",
+    "text": "Returned laptop charger. Status shows verified, but wallet balance not updated with ₹1,299 credit.",
+    "category": "Refund",
+    "subcategory": "Wallet Credit Delay",
+    "sentiment": "frustrated",
+    "sentimentScore": -0.52,
+    "urgency": "medium",
+    "basePriorityScore": 65,
+    "dnaFingerprint": "DNA-REF-WLT-004",
+    "entities": {
+      "amount": 1299,
+      "target": "Wallet"
+    },
+    "targetDepartment": "Payment & Billing",
+    "suggestedResolution": "Closed-loop wallet balance reconciled. Funds credited with bonus ₹50 credit."
+  },
+  {
+    "id": "ML-TEC-003",
+    "text": "Unable to download GST tax invoices for financial year 2025-26. Audit filing deadline is tomorrow!",
+    "category": "Technical",
+    "subcategory": "Tax Invoice Export Latency",
+    "sentiment": "furious",
+    "sentimentScore": -0.86,
+    "urgency": "critical",
+    "basePriorityScore": 92,
+    "dnaFingerprint": "DNA-TEC-INV-003",
+    "entities": {
+      "deadline": "Immediate Audit",
+      "doc": "GST Invoice"
+    },
+    "targetDepartment": "Tech Support",
+    "suggestedResolution": "Backend reporting replica queried manually. Zip archive of all GST invoices emailed directly."
+  },
+  {
+    "id": "ML-TEC-004",
+    "text": "Search bar autocomplete not working, typing shows blank dropdown and spins indefinitely.",
+    "category": "Technical",
+    "subcategory": "Elasticsearch Index Lag",
+    "sentiment": "neutral",
+    "sentimentScore": -0.15,
+    "urgency": "low",
+    "basePriorityScore": 42,
+    "dnaFingerprint": "DNA-TEC-SRC-004",
+    "entities": {
+      "component": "Search Autocomplete"
+    },
+    "targetDepartment": "Tech Support",
+    "suggestedResolution": "Redis search cache cleared and re-warmed. Dropdown latency reduced to 35ms."
+  }
+]

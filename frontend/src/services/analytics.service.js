@@ -20,5 +20,9 @@ export const analyticsService = {
   getSLACompliance: async () => {
     const res = await API.get('/api/analytics/sla');
     return res.data;
+  },
+  getMLDataset: async () => {
+    const res = await API.get('/api/analytics/dataset');
+    return res.data;
   }
 };

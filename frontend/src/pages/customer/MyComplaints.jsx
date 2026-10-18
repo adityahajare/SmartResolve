@@ -23,15 +23,8 @@ export const MyComplaints = () => {
   useEffect(() => {
     ticketService.getTickets()
       .then(res => {
-        if (res.success && res.data.length > 0) {
-          setTickets(res.data);
-        } else {
-          setTickets([
-            { _id: '1', ticketId: 'SR-0083', title: 'Cannot connect to payment gateway during UPI checkout', category: 'Payment', status: 'in_progress', priority: 'critical', finalScore: 92 },
-            { _id: '2', ticketId: 'SR-0082', title: 'Application authentication error on OTP login', category: 'Technical', status: 'pending', priority: 'high', finalScore: 84 },
-            { _id: '3', ticketId: 'SR-0078', title: 'UPI double debit refund turnaround SLA breached', category: 'Refund', status: 'resolved', priority: 'medium', finalScore: 78 },
-            { _id: '4', ticketId: 'SR-0076', title: 'Delayed shipment tracking not updating', category: 'Delivery', status: 'in_progress', priority: 'medium', finalScore: 62 },
-          ]);
+        if (res.success) {
+          setTickets(res.data || []);
         }
       })
       .catch(() => {})
@@ -83,39 +76,62 @@ export const MyComplaints = () => {
 
       {/* Ticket List Cards */}
       <div className="grid gap-3">
-        {filteredTickets.map((t) => (
-          <Link
-            key={t._id}
-            to={`/complaints/${t._id}`}
-            className="p-5 bg-[#140e24]/90 backdrop-blur-xl border border-fuchsia-950/70 hover:border-fuchsia-500/60 rounded-3xl shadow-xl transition flex flex-col md:flex-row md:items-center justify-between gap-4 group"
-          >
-            <div className="space-y-1.5 flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs font-mono font-bold text-fuchsia-400">
-                  {t.ticketId || t._id}
-                </span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 capitalize">
-                  {t.category}
-                </span>
-                <StatusBadge status={t.status} />
-              </div>
-              <h3 className="font-bold text-slate-100 text-sm group-hover:text-fuchsia-300 transition truncate">
-                {t.title}
-              </h3>
+        {loading ? (
+          <div className="p-12 text-center text-slate-400">
+            <Clock className="w-6 h-6 animate-spin mx-auto mb-2 text-fuchsia-400" />
+            Loading your grievances...
+          </div>
+        ) : filteredTickets.length === 0 ? (
+          <div className="p-12 bg-[#140e24]/60 border border-dashed border-fuchsia-950/70 rounded-3xl text-center space-y-3">
+            <Layers className="w-10 h-10 text-fuchsia-500/40 mx-auto" />
+            <h3 className="text-base font-bold text-slate-200">No grievances recorded</h3>
+            <p className="text-xs text-slate-400 max-w-md mx-auto">
+              You haven't filed any complaints matching this filter. Once you submit a grievance, our AI will classify, prioritize, and monitor SLA deadlines in real-time.
+            </p>
+            <div className="pt-2">
+              <Link
+                to="/raise"
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-fuchsia-600 to-indigo-600 hover:from-fuchsia-500 text-white rounded-xl text-xs font-bold transition shadow-sm"
+              >
+                <Plus className="w-4 h-4" /> Raise Your First Complaint
+              </Link>
             </div>
+          </div>
+        ) : (
+          filteredTickets.map((t) => (
+            <Link
+              key={t._id}
+              to={`/complaints/${t._id}`}
+              className="p-5 bg-[#140e24]/90 backdrop-blur-xl border border-fuchsia-950/70 hover:border-fuchsia-500/60 rounded-3xl shadow-xl transition flex flex-col md:flex-row md:items-center justify-between gap-4 group"
+            >
+              <div className="space-y-1.5 flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xs font-mono font-bold text-fuchsia-400">
+                    {t.ticketId || t._id}
+                  </span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 capitalize">
+                    {t.category}
+                  </span>
+                  <StatusBadge status={t.status} />
+                </div>
+                <h3 className="font-bold text-slate-100 text-sm group-hover:text-fuchsia-300 transition truncate">
+                  {t.title}
+                </h3>
+              </div>
 
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] text-slate-400 font-mono">Score:</span>
-                <span className="font-mono font-bold text-fuchsia-400 text-xs">
-                  {t.finalScore || 75}
-                </span>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] text-slate-400 font-mono">Score:</span>
+                  <span className="font-mono font-bold text-fuchsia-400 text-xs">
+                    {t.finalScore || 75}
+                  </span>
+                </div>
+                <SLACountdown deadline={t.slaDeadline} breached={t.slaBreached} />
+                <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-fuchsia-400 transition" />
               </div>
-              <SLACountdown deadline={t.slaDeadline} breached={t.slaBreached} />
-              <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-fuchsia-400 transition" />
-            </div>
-          </Link>
-        ))}
+            </Link>
+          ))
+        )}
       </div>
     </div>
   );
